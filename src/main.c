@@ -3,6 +3,6 @@
 #include "header.h"
 
 int main() {
-    printf("terzo commit");
+
     return 0;
 }
