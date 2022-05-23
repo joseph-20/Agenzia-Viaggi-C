@@ -2,7 +2,7 @@
 #define HEADER_H
 
 #define MAX 20
-#define LONG_MAX 50
+#define MAX_LONG 50
 
 typedef struct city {
     char name[MAX];                 // Nome della città
@@ -18,10 +18,10 @@ typedef struct country {
 
 // Lista Single Linked per gli Utenti
 typedef struct user {
-    char first_name[LONG_MAX];      // Nome
-    char last_name[LONG_MAX];       // Cognome
-    char email[LONG_MAX];           // Email
-    char password[LONG_MAX];        // Password
+    char first_name[MAX_LONG];      // Nome
+    char last_name[MAX_LONG];       // Cognome
+    char email[MAX_LONG];           // Email
+    char password[MAX_LONG];        // Password
     struct user *next;
 } user_t;
 
