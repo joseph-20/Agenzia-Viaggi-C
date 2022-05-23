@@ -3,14 +3,14 @@
 #include "header.h"
 
 int main() {
+    user_t *user_list = NULL;
 
-    printf("test\n");
-    printf("Premi invio per continuare...\n");
-    getchar();
-    clear_screen();
-    printf("LESGOOOOO\n");
-    printf("Premi invio per continuare...\n");
-    getchar();
+    user_list = fetch_users(user_list);
+
+    user_t *tmp = new_user("pietro", "smusi", "pietro", "smusi");
+    user_list = add_to_list(user_list, tmp);
+
+    update_user_list(user_list);
 
     return 0;
 }
