@@ -15,7 +15,7 @@ int login_admin() {
         printf("\n-------------------------");
         printf("\n|    Password Errata    |");
         printf("\n-------------------------\n");
-        sleep(3);
+        csleep(3);
         return 0;
     }
 }

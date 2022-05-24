@@ -9,9 +9,12 @@ void clear_screen() {
 #endif
 }
 
-void wait() {
-    printf("Premi un tasto per continuare...\n");
-    getchar();
+void csleep(int seconds) {
+#ifdef _WIN32
+    Sleep(seconds);
+#else
+    sleep(seconds);
+#endif
 }
 
 // Schermata di login

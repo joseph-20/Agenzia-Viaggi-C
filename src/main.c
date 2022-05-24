@@ -29,7 +29,7 @@ int main() {
             default:
                 clear_screen();
                 printf("\nInserisci un'opzione valida.\n");
-                sleep(3);
+                csleep(3);
                 break;
         }
     } while(flag);

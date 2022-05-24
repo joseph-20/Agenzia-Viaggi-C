@@ -51,6 +51,7 @@ int login_admin();
 
 void clear_screen();
 int login_screen();
+void csleep(int seconds);
 void wait();
 
 ///////////////////////////////
