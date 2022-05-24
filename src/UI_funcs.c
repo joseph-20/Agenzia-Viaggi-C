@@ -11,7 +11,7 @@ void clear_screen() {
 
 void csleep(int seconds) {
 #ifdef _WIN32
-    Sleep(seconds);
+    Sleep(seconds * 1000);
 #else
     sleep(seconds);
 #endif
