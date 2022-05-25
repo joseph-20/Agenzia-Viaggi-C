@@ -20,14 +20,18 @@
 
 typedef struct city {
     char name[MAX];                 // Nome della città
+    int npoi;                       // # Punti di Interesse
     int **poi;                      // Archi e Distanze dei Punti di Interesse
     char **poi_names;               // Nomi dei Punti di Interesse
+    struct city *next;
 } city_t;
 
 typedef struct country {
     char name[MAX];                 // Nome del Paese
+    int ncities;                    // #Ccittà in un Paese
     int **cities;                   // Archi e Distanze tra le Città
     char **cities_names;            // Nome delle città
+    struct country *next;
 } country_t;
 
 // Lista Single Linked per gli Utenti
@@ -45,20 +49,44 @@ typedef struct user {
 
 int login_admin();
 
+//////////////////////////////
+//      Funzioni Città      //
+//////////////////////////////
+
+city_t *add_city_to_list(city_t *city_list, city_t *new);
+void free_city_matrix(city_t *city);
+city_t *new_city(char city_name[]);
+
+//////////////////////////////
+//      Funzioni Paese      //
+//////////////////////////////
+
+country_t *add_country_to_list(country_t *country_list, country_t *new);
+void free_country_matrix(country_t *country);
+country_t *new_country(char country_name[]);
+country_t *remove_country_from_list(country_t *country_list, country_t *target);
+
+///////////////////////////////////////////
+//      Funzioni Punti di Interesse      //
+///////////////////////////////////////////
+
+void insert_new_poi(city_t *city);
+void insert_new_poi_name(city_t *city, char poi_name[]);
+void new_poi(city_t *city);
+
 ///////////////////////////
 //      Funzioni UI      //
 ///////////////////////////
 
 void clear_screen();
-int login_screen();
 void csleep(int seconds);
-void wait();
+int login_screen();
 
 ///////////////////////////////
 //      Funzioni Utente      //
 ///////////////////////////////
 
-user_t *add_to_list(user_t *users_list, user_t *new);
+user_t *add_user_to_list(user_t *users_list, user_t *new);
 int check_email(user_t *user_list, char email[]);
 int check_password(user_t *user_list, char email[], char password[]);
 user_t *fetch_users(user_t *user_list);

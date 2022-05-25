@@ -3,6 +3,9 @@
 int main() {
     user_t *user_list = NULL,
         *user = NULL;
+
+    country_t *country_list = NULL;
+    city_t *Napoli = NULL;
     int flag = 0;
 
     user_list = fetch_users(user_list);

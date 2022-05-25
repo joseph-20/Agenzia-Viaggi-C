@@ -2,8 +2,8 @@
 
 // Aggiunge il nuovo utente (nodo) alla lista
 // Inserimento in testa
-user_t *add_to_list(user_t *users_list, user_t *new) {
-    if(users_list != NULL) {
+user_t *add_user_to_list(user_t *users_list, user_t *new) {
+    if(users_list) {
         new->next = users_list;
     }
     return new;
@@ -72,7 +72,7 @@ user_t *fetch_users(user_t *user_list) {
             // printf("%s %s %s %s\n", first_name, last_name, email, password);
 
             new = new_user(first_name, last_name, email, password);
-            user_list = add_to_list(user_list, new);
+            user_list = add_user_to_list(user_list, new);
         }
 
         fclose(users);
@@ -168,7 +168,7 @@ user_t *sign_up(user_t *user_list) {
     password[strlen(password) - 1] = 0;
 
     new = new_user(first_name, last_name, email, password);
-    user_list = add_to_list(user_list, new);
+    user_list = add_user_to_list(user_list, new);
 
     update_user_list(user_list);
 
