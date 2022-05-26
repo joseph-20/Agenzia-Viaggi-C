@@ -5,7 +5,7 @@ int main() {
         *user = NULL;
 
     country_t *country_list = NULL;
-    city_t *Napoli = NULL;
+    city_t *city_list = NULL;
     int flag = 0;
 
     user_list = fetch_users(user_list);
@@ -24,7 +24,7 @@ int main() {
                 break;
             case 3:
                 if(login_admin()) {
-                    // Pannello controllo admin
+                    admin_control_panel(city_list);
                 }
                 break;
             case 0:

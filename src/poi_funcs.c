@@ -7,12 +7,12 @@ void insert_new_poi(city_t *city) {
     if(!city->poi) {
         city->poi = (int **)calloc(city->npoi, sizeof(int *));
         for(i = 0; i < city->npoi; i++) {
-            city->poi[i] = (int *)calloc(city->poi, sizeof(int));
+            city->poi[i] = (int *)calloc(city->npoi, sizeof(int));
         }
     } else {
         city->poi = (int **)realloc(city->poi, city->npoi);
         for(i = 0; i < city->npoi; i++) {
-            city->poi[i] = (int *)realloc(city->poi[i], city->poi);
+            city->poi[i] = (int *)realloc(city->poi[i], city->npoi);
         }
     }
 }
@@ -41,7 +41,7 @@ void new_poi(city_t *city) {
 
     if(city) {
         printf("\nInserisci il nome del nuovo punto di interesse: ");
-        fgets(name, name, stdin);
+        fgets(name, MAX_LONG, stdin);
         name[strcspn(name, "\n")] = 0;
 
         city->npoi += 1;

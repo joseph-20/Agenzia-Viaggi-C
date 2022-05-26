@@ -16,7 +16,7 @@
 #define MAX_LONG 50
 #define LINE_MAX 150
 #define USER_DB "database/users.txt"
-#define ADMIN_PIN 793842
+#define ADMIN_PIN 0000
 
 typedef struct city {
     char name[MAX];                 // Nome della città
@@ -47,6 +47,8 @@ typedef struct user {
 //      Funzioni Amministratore      //
 ///////////////////////////////////////
 
+void admin_control_panel(city_t *city_list);
+void delete_city(city_t *city_list);
 int login_admin();
 
 //////////////////////////////
@@ -54,8 +56,10 @@ int login_admin();
 //////////////////////////////
 
 city_t *add_city_to_list(city_t *city_list, city_t *new);
+int check_city(city_t *city_list, char city_name[]);
 void free_city_matrix(city_t *city);
 city_t *new_city(char city_name[]);
+city_t *remove_city_from_list(city_t *city_list, char city_name[]);
 
 //////////////////////////////
 //      Funzioni Paese      //
