@@ -36,7 +36,7 @@ int check_password(user_t *user_list, char email[], char password[]) {
 }
 
 // Fetch della lista di utenti dal file/database
-user_t *fetch_users(user_t *user_list) {
+user_t *fetch_users() {
     char first_name[MAX_LONG],
         last_name[MAX_LONG],
         email[MAX_LONG],
@@ -44,7 +44,8 @@ user_t *fetch_users(user_t *user_list) {
         *token,
         line[LINE_MAX];
     FILE *users = NULL;
-    user_t *new = NULL;
+    user_t *user_list = NULL,
+        *new = NULL;
 
     users = fopen(USER_DB, "r");
     if(!users) {
@@ -193,10 +194,14 @@ user_t *new_user(char first_name[], char last_name[], char email[], char passwor
 
 // Aggiornamento della lista di utenti nel database dopo una nuova registrazione
 void update_user_list(user_t *user_list) {
-    FILE *users = fopen(USER_DB, "w+");
-    while(user_list) {
-        fprintf(users, "%s,%s,%s,%s\n", user_list->first_name, user_list->last_name, user_list->email, user_list->password);
-        user_list = user_list->next;
+    FILE *users = fopen(USER_DB, "w");
+    if(!users) {
+        fputs("Impossibile aggiornare il database utenti.", stdout);
+    } else {
+        while(user_list) {
+            fprintf(users, "%s,%s,%s,%s\n", user_list->first_name, user_list->last_name, user_list->email, user_list->password);
+            user_list = user_list->next;
+        }
+        fclose(users);
     }
-    fclose(users);
 }

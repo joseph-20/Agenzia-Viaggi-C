@@ -20,6 +20,7 @@ void admin_control_panel(city_t *city_list) {
             case 2:
                 clear_screen();
                 delete_city(city_list);
+                update_city_list(city_list);
                 csleep(3);
                 break;
             case 0:
@@ -37,6 +38,7 @@ void delete_city(city_t *city_list) {
     printf("\nInserisci il nome della citta' da eliminare: ");
     fgets(name, MAX, stdin);
     name[strcspn(name, "\n")] = 0;
+    name[0] = toupper(name[0]);
 
     if(check_city(city_list, name)) {
         remove_city_from_list(city_list, name);
