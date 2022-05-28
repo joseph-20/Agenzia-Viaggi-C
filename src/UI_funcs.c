@@ -1,6 +1,8 @@
 #include "header.h"
 
-// Pulizia del terminale
+/**
+ *  Funzione cross-platform per pulizia del terminale
+ */
 void clear_screen() {
 #ifdef _WIN32
     system("cls");
@@ -9,6 +11,9 @@ void clear_screen() {
 #endif
 }
 
+/**
+ *  Funzione cross-platform di wait
+ */
 void csleep(int seconds) {
 #ifdef _WIN32
     Sleep(seconds * 1000);

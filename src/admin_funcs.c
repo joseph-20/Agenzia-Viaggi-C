@@ -1,5 +1,8 @@
 #include "header.h"
 
+/**
+ *  Pannello di controllo admin
+ */
 void admin_control_panel(city_t *city_list) {
     int flag = 0;
 
@@ -33,6 +36,9 @@ void admin_control_panel(city_t *city_list) {
     } while(flag);
 }
 
+/**
+ *  Cancellazione di una meta
+ */
 void delete_city(city_t *city_list) {
     char name[MAX];
     printf("\nInserisci il nome della citta' da eliminare: ");
@@ -48,7 +54,9 @@ void delete_city(city_t *city_list) {
     }
 }
 
-// Fase di login amministratore
+/**
+ *  Controllo login amministratore
+ */
 int login_admin() {
     int pin = 0;
 

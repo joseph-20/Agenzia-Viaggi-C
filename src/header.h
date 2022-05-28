@@ -17,23 +17,24 @@
 #define LINE_MAX 150
 #define USER_DB "database/users.txt"
 #define CITY_DB "database/city_list.txt"
-#define POI_DB "database/pois/"
 #define ADMIN_PIN 0000
 
 typedef struct city {
     char name[MAX_LONG];            // Nome della città
     int npoi;                       // # Punti di Interesse
-    int **poi;                      // Archi e Distanze dei Punti di Interesse
+    int **poi;                      // Distanze dei Punti di Interesse
     char **poi_names;               // Nomi dei Punti di Interesse
     struct city *next;
 } city_t;
 
 typedef struct country {
     char name[MAX];                 // Nome del Paese
-    int ncities;                    // #Ccittà in un Paese
-    int **cities;                   // Archi e Distanze tra le Città
+    int ncities;                    // # Città in un Paese
+    int **city_distances_t;         // Distanze tra le Città in treno
+    int **city_costs_t;             // Costi di viaggio tra le Città in treno
+    int **city_distances_p;         // Distanze tra le città in aereo
+    int **city_costs_p;             // Costi di viaggio tra le città in aereo
     char **cities_names;            // Nome delle città
-    struct country *next;
 } country_t;
 
 // Lista Single Linked per gli Utenti
@@ -61,7 +62,7 @@ city_t *add_city_to_list(city_t *city_list, city_t *new);
 int check_city(city_t *city_list, char city_name[]);
 city_t *fetch_cities();
 void free_city_list(city_t *city_list);
-void fetch_city_pois(city_t *city);
+void fetch_city_pois(city_t *city, FILE *city_list);
 void free_city_matrix(city_t *city);
 city_t *new_city(char city_name[], int npoi);
 city_t *remove_city_from_list(city_t *city_list, char city_name[]);

@@ -1,5 +1,8 @@
 #include "header.h"
 
+/**
+ *  Aggiunta di una nuova città alla lista
+ */
 city_t *add_city_to_list(city_t *city_list, city_t *new) {
     if(city_list) {
         new->next = city_list;
@@ -7,6 +10,9 @@ city_t *add_city_to_list(city_t *city_list, city_t *new) {
     return new;
 }
 
+/**
+ *  Controllo se una città è già presente nella lista
+ */
 int check_city(city_t *city_list, char city_name[]) {
     if(city_list) {
         while(city_list) {
@@ -19,6 +25,9 @@ int check_city(city_t *city_list, char city_name[]) {
     return 0;
 }
 
+/**
+ *  Fetch delle città e dei loro punti di interesse dal file/database
+ */
 city_t *fetch_cities() {
     char city_name[MAX_LONG],
         line[LINE_MAX],
@@ -43,42 +52,39 @@ city_t *fetch_cities() {
             city_npoi = atoi(token);
 
             new = new_city(city_name, city_npoi);
-            fetch_city_pois(new);
+            fetch_city_pois(new, cities);
             city_list = add_city_to_list(city_list, new);
         }
         return city_list;
     }
 }
 
-void fetch_city_pois(city_t *city) {
-    char file_name[MAX_LONG],
-        trash;
-    strcpy(file_name, POI_DB);
-    strcat(strcat(file_name, city->name), ".txt");
+/**
+ *  Fetch dei punti di interesse
+ */
+void fetch_city_pois(city_t *city, FILE *city_list) {
+    char trash;
     int i = 0,
         j = 0,
         tmp = 0;
-    FILE *city_poi_db = fopen(file_name, "r");
-    if(!city_poi_db) {
-        printf("Impossibile recuperare i punti di interesse per %s.\n", city->name);
-    } else {
-        for(i = 0; i < city->npoi; i++) {
-            for(j = 0; j < city->npoi; j++) {
-                fscanf(city_poi_db, "%d", &city->poi[i][j]);
-            }
+
+    for(i = 0; i < city->npoi; i++) {
+        for(j = 0; j < city->npoi; j++) {
+            fscanf(city_list, "%d", &city->poi[i][j]);
         }
+    }
 
-        fscanf(city_poi_db, "%c", &trash);
+    fscanf(city_list, "%c", &trash);
 
-        for(i = 0; i < city->npoi; i++) {
-            fgets(city->poi_names[i], MAX_LONG, city_poi_db);
-            city->poi_names[i][strlen(city->poi_names[i]) - 1] = 0;
-        }
-
-        fclose(city_poi_db);
+    for(i = 0; i < city->npoi; i++) {
+        fgets(city->poi_names[i], MAX_LONG, city_list);
+        city->poi_names[i][strcspn(city->poi_names[i], "\n")] = 0;
     }
 }
 
+/**
+ *  Deallocazione della lista delle città
+ */
 void free_city_list(city_t *city_list) {
     city_t *tmp = NULL;
 
@@ -90,6 +96,9 @@ void free_city_list(city_t *city_list) {
     }
 }
 
+/**
+ *  Deallocazione delle matrici di ogni nodo città
+ */
 void free_city_matrix(city_t *city) {
     int i = 0;
 
@@ -105,6 +114,9 @@ void free_city_matrix(city_t *city) {
     city->poi_names = NULL;
 }
 
+/**
+ *  Allocazione di un nodo città
+ */
 city_t *new_city(char city_name[], int npoi) {
     int i = 0;
     city_t *new = (city_t *)malloc(sizeof(city_t));
@@ -130,6 +142,9 @@ city_t *new_city(char city_name[], int npoi) {
     return new;
 }
 
+/**
+ *  Cancellazione di una città dalla lista
+ */
 city_t *remove_city_from_list(city_t *city_list, char city_name[]) {
     city_t *tmp = NULL;
     if(!city_list) {
@@ -147,6 +162,9 @@ city_t *remove_city_from_list(city_t *city_list, char city_name[]) {
     }
 }
 
+/**
+ * Ristampa la lista nel file/database
+ */
 void update_city_list(city_t *city_list) {
     FILE *cities = fopen(CITY_DB, "w");
     if(!cities) {
