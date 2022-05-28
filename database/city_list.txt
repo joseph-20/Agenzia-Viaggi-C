@@ -1,14 +1,16 @@
-Napoli,3
+4
+Bologna
+Roma
+Milano
+Napoli
+3
 1 2 3
 4 5 6
 7 8 9
-Stazione Centrale
-Aeroporto Capodichino
-Stazione Toledo
-Milano,1
-0
-Aeroporto Linate
-Roma,5
+Aeroporto Bologna
+Stazione Bologna
+Circo di Bologna
+5
 1 2 3 4 5
 6 7 8 9 10
 11 12 13 14 15
@@ -19,10 +21,13 @@ Aeroporto Fiumicino
 Fori Romani
 Circo Massimo
 Roma Termini
-Bologna,3
+1
+0
+Aeroporto Linate
+3
 1 2 3
 4 5 6
 7 8 9
-Aeroporto Bologna
-Stazione Bologna
-Circo di Bologna
+Stazione Centrale
+Aeroporto Capodichino
+Stazione Toledo

@@ -20,7 +20,6 @@
 #define ADMIN_PIN 0000
 
 typedef struct city {
-    char name[MAX_LONG];            // Nome della città
     int npoi;                       // # Punti di Interesse
     int **poi;                      // Distanze dei Punti di Interesse
     char **poi_names;               // Nomi dei Punti di Interesse
@@ -28,13 +27,13 @@ typedef struct city {
 } city_t;
 
 typedef struct country {
-    char name[MAX];                 // Nome del Paese
     int ncities;                    // # Città in un Paese
-    int **city_distances_t;         // Distanze tra le Città in treno
     int **city_costs_t;             // Costi di viaggio tra le Città in treno
-    int **city_distances_p;         // Distanze tra le città in aereo
+    int **city_distances_t;         // Distanze tra le Città in treno
     int **city_costs_p;             // Costi di viaggio tra le città in aereo
+    int **city_distances_p;         // Distanze tra le città in aereo
     char **cities_names;            // Nome delle città
+    city_t *city_list;
 } country_t;
 
 // Lista Single Linked per gli Utenti
@@ -59,23 +58,24 @@ int login_admin();
 //////////////////////////////
 
 city_t *add_city_to_list(city_t *city_list, city_t *new);
-int check_city(city_t *city_list, char city_name[]);
-city_t *fetch_cities();
+city_t *fetch_cities(FILE *city_db);
 void free_city_list(city_t *city_list);
-void fetch_city_pois(city_t *city, FILE *city_list);
 void free_city_matrix(city_t *city);
-city_t *new_city(char city_name[], int npoi);
-city_t *remove_city_from_list(city_t *city_list, char city_name[]);
+int get_city_index(country_t *country, char city_name[]);
+city_t *new_city();
+// remove city con realloc
 void update_city_list(city_t *city_list);
 
 //////////////////////////////
 //      Funzioni Paese      //
 //////////////////////////////
 
-country_t *add_country_to_list(country_t *country_list, country_t *new);
+int check_city(country_t *country, char city_name[]);
+char **create_char_matrix(int row, int length);
+int **create_int_matrix(int dim);
 void free_country_matrix(country_t *country);
-country_t *new_country(char country_name[]);
-country_t *remove_country_from_list(country_t *country_list, country_t *target);
+country_t *init_country();
+country_t *new_country();
 
 ///////////////////////////////////////////
 //      Funzioni Punti di Interesse      //
