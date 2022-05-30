@@ -23,10 +23,10 @@ void csleep(int seconds) {
 }
 
 // Schermata di login
-int login_screen() {
+int main_menu() {
     int flag = 0;
 
-    printf("\n1. Login");
+    printf("1. Login");
     printf("\n2. Registrati");
     printf("\n3. Accesso Amministratore");
     printf("\n0. Esci");

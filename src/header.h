@@ -42,6 +42,7 @@ typedef struct user {
     char last_name[MAX_LONG];       // Cognome
     char email[MAX_LONG];           // Email
     char password[MAX_LONG];        // Password
+    float balance;                  // Saldo Account
     struct user *next;
 } user_t;
 
@@ -91,13 +92,15 @@ void new_poi(city_t *city);
 
 void clear_screen();
 void csleep(int seconds);
-int login_screen();
+int main_menu();
 
 ///////////////////////////////
 //      Funzioni Utente      //
 ///////////////////////////////
 
 user_t *add_user_to_list(user_t *users_list, user_t *new);
+void balance_management(user_t *user);
+void balance_top_up(user_t *user);
 int check_email(user_t *user_list, char email[]);
 int check_password(user_t *user_list, char email[], char password[]);
 user_t *fetch_users();
@@ -105,7 +108,8 @@ void free_user_list(user_t *user_list);
 user_t *get_user(user_t *user_list, char email[]);
 user_t *sign_in(user_t *user_list);
 user_t *sign_up(user_t *user_list);
-user_t *new_user(char first_name[], char last_name[], char email[], char password[]);
+user_t *new_user(char first_name[], char last_name[], char email[], char password[], float balance);
 void update_user_list(user_t *user_list);
+void user_control_panel(user_t *user);
 
 #endif

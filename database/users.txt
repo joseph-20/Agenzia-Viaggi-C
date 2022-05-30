@@ -1,5 +1,1 @@
-Luca,Rea,reamerda,andreasputo
-giuseppe,longobardo,test,test
-domenico,vitale,ciao,bruh
-sebastiano,sannino,lmao,lma
-pietro,smusi,pietro,smusi
+Giuseppe,Longobardo,no,no,10.00

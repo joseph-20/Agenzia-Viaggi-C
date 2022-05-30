@@ -9,6 +9,84 @@ user_t *add_user_to_list(user_t *users_list, user_t *new) {
     return new;
 }
 
+void balance_management(user_t *user) {
+    int choice = 0;
+    do {
+        clear_screen();
+
+        printf("Il saldo dell'account ammonta a €%.2f\n", user->balance);
+        printf("\nCosa si desidera fare?");
+        printf("\n1. Ricarica saldo account");
+        printf("\n0. Torna indietro");
+        printf("\n> ");
+
+        scanf(" %d", &choice);
+        getchar();
+
+        switch(choice) {
+            case 1:
+                balance_top_up(user);
+                break;
+            case 0:
+                break;
+            default:
+                clear_screen();
+
+                printf("----------------------------------\n");
+                printf("|    Inserire opzione valida.    |\n");
+                printf("----------------------------------\n");
+
+                csleep(3);
+                break;
+        }
+    } while(choice);
+}
+
+void balance_top_up(user_t *user) {
+    float top_up = 0;
+    int flag = 0;
+
+    do {
+        clear_screen();
+
+        printf("\nInserire l'importo da ricaricare");
+        printf("\n> ");
+        scanf("%f", &top_up);
+        getchar();
+
+        if(top_up < 0) {
+            clear_screen();
+
+            printf("+---------------------------------------------------------+\n");
+            printf("|    Impossibile ricaricare di una quantita' negativa.    |\n");
+            printf("+---------------------------------------------------------+\n");
+
+            flag = 1;
+            csleep(3);
+        } else if(top_up > __FLT_MAX__) {
+            user->balance = __FLT_MAX__;
+            clear_screen();
+
+            printf("+-------------------------------------------+\n");
+            printf("|    Operazione effettuata con successo.    |\n");
+            printf("+-------------------------------------------+\n");
+
+            flag = 0;
+            csleep(3);
+        } else {
+            user->balance += top_up;
+            clear_screen();
+
+            printf("+-------------------------------------------+\n");
+            printf("|    Operazione effettuata con successo.    |\n");
+            printf("+-------------------------------------------+\n");
+
+            flag = 0;
+            csleep(3);
+        }
+    } while(flag);
+}
+
 // Controlla che l'email inserita appartenga ad un utente registrato
 int check_email(user_t *user_list, char email[]) {
     if(user_list) {
@@ -43,13 +121,14 @@ user_t *fetch_users() {
         password[MAX_LONG],
         *token,
         line[LINE_MAX];
+    float balance;
     FILE *users = NULL;
     user_t *user_list = NULL,
         *new = NULL;
 
     users = fopen(USER_DB, "r");
     if(!users) {
-        fputs("Impossibile aprire il database utenti.", stdout);
+        printf("Impossibile aprire il database utenti.\n");
     } else {
         while(fgets(line, LINE_MAX, users) != NULL) {
 
@@ -68,11 +147,14 @@ user_t *fetch_users() {
             token = NULL;
             token = strtok(token, ",");
             strcpy(password, token);
-            password[strlen(password) - 1] = 0;
+
+            token = NULL;
+            token = strtok(token, ",");
+            balance = atof(token);
 
             // printf("%s %s %s %s\n", first_name, last_name, email, password);
 
-            new = new_user(first_name, last_name, email, password);
+            new = new_user(first_name, last_name, email, password, balance);
             user_list = add_user_to_list(user_list, new);
         }
 
@@ -109,27 +191,34 @@ user_t *get_user(user_t *user_list, char email[]) {
 user_t *sign_in(user_t *user_list) {
     char email[MAX_LONG],
         password[MAX_LONG];
-    int flag = 0;
     user_t *user = NULL;
 
-    do {
-        printf("Inserisci email: ");
-        scanf("%s", email);
-        printf("Inserisci password: ");
-        scanf("%s", password);
+    clear_screen();
 
-        if(check_email(user_list, email)) {
-            if(!check_password(user_list, email, password)) {
-                printf("\nPassword errata.\n");
-                flag = 1;
-            }
+    printf("Inserisci email: ");
+    scanf("%s", email);
+    printf("Inserisci password: ");
+    scanf("%s", password);
+    getchar();
+
+    if(check_email(user_list, email)) {
+        if(check_password(user_list, email, password)) {
+            user = get_user(user_list, email);
         } else {
-            printf("\nLa email inserita non è corretta.\n");
-            flag = 1;
+            clear_screen();
+            printf("+------------------------+\n");
+            printf("|    Password errata.    |\n");
+            printf("+------------------------+\n");
+            csleep(3);
         }
-    } while(flag);
+    } else {
+        clear_screen();
+        printf("+-----------------------------------------+\n");
+        printf("|    La email inserita non è corretta.    |\n");
+        printf("+-----------------------------------------+\n");
+        csleep(3);
+    }
 
-    user = get_user(user_list, email);
     return user;
 }
 
@@ -144,18 +233,18 @@ user_t *sign_up(user_t *user_list) {
 
     printf("Inserisci nome: ");
     fgets(first_name, MAX_LONG, stdin);
-    first_name[strlen(first_name) - 1] = 0;
+    first_name[strcspn(first_name, "\n")] = 0;
     first_name[0] = toupper(first_name[0]);
 
     printf("Inserisci cognome: ");
     fgets(last_name, MAX_LONG, stdin);
-    last_name[strlen(last_name) - 1] = 0;
+    last_name[strcspn(last_name, "\n")] = 0;
     last_name[0] = toupper(last_name[0]);
 
     do {
         printf("Inserisci email: ");
         fgets(email, MAX_LONG, stdin);
-        email[strlen(email) - 1] = 0;
+        email[strcspn(email, "\n")] = 0;
 
         flag = check_email(user_list, email);
         if(flag) {
@@ -166,9 +255,9 @@ user_t *sign_up(user_t *user_list) {
 
     printf("Inserisci password: ");
     fgets(password, MAX_LONG, stdin);
-    password[strlen(password) - 1] = 0;
+    password[strcspn(password, "\n")] = 0;
 
-    new = new_user(first_name, last_name, email, password);
+    new = new_user(first_name, last_name, email, password, 0);
     user_list = add_user_to_list(user_list, new);
 
     update_user_list(user_list);
@@ -177,7 +266,7 @@ user_t *sign_up(user_t *user_list) {
 }
 
 // Creazione di un nuovo utente
-user_t *new_user(char first_name[], char last_name[], char email[], char password[]) {
+user_t *new_user(char first_name[], char last_name[], char email[], char password[], float balance) {
     user_t *new = (user_t *)malloc(sizeof(user_t));
     if(!new) {
         fputs("ERRORE: impossibile allocare memoria.", stdout);
@@ -187,6 +276,7 @@ user_t *new_user(char first_name[], char last_name[], char email[], char passwor
         strcpy(new->last_name, last_name);
         strcpy(new->email, email);
         strcpy(new->password, password);
+        new->balance = balance;
         new->next = NULL;
         return new;
     }
@@ -199,9 +289,43 @@ void update_user_list(user_t *user_list) {
         fputs("Impossibile aggiornare il database utenti.", stdout);
     } else {
         while(user_list) {
-            fprintf(users, "%s,%s,%s,%s\n", user_list->first_name, user_list->last_name, user_list->email, user_list->password);
+            fprintf(users, "%s,%s,%s,%s,%.2f\n", user_list->first_name, user_list->last_name, user_list->email, user_list->password, user_list->balance);
             user_list = user_list->next;
         }
         fclose(users);
     }
+}
+
+void user_control_panel(user_t *user) {
+    int choice = 0;
+
+    do {
+        clear_screen();
+
+        printf("Ciao, %s %s!\n", user->first_name, user->last_name);
+
+        printf("\nCosa si desidera fare?");
+        printf("\n1. Prenota un viaggio");
+        printf("\n2. Controlla saldo e ricarica account");
+        printf("\n0. Logout");
+        printf("\n> ");
+
+        scanf("%d", &choice);
+        getchar();
+
+        switch(choice) {
+            case 1:
+                // UI negozio
+                break;
+            case 2:
+                balance_management(user);
+                break;
+            case 0:
+                break;
+            default:
+                fputs("Inserire opzione valida.", stdout);
+                csleep(3);
+                break;
+        }
+    } while(choice);
 }

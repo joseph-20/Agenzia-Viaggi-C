@@ -22,8 +22,11 @@ void admin_control_panel(city_t *city_list) {
                 break;
             case 2:
                 clear_screen();
+                // Rivedere
+                /*
                 delete_city(city_list);
                 update_city_list(city_list);
+                */
                 csleep(3);
                 break;
             case 0:
@@ -40,18 +43,7 @@ void admin_control_panel(city_t *city_list) {
  *  Cancellazione di una meta
  */
 void delete_city(city_t *city_list) {
-    char name[MAX];
-    printf("\nInserisci il nome della citta' da eliminare: ");
-    fgets(name, MAX, stdin);
-    name[strcspn(name, "\n")] = 0;
-    name[0] = toupper(name[0]);
 
-    if(check_city(city_list, name)) {
-        remove_city_from_list(city_list, name);
-        printf("\nCitta' eliminata con successo.\n");
-    } else {
-        printf("\nLa citta' specificata non esiste.\n");
-    }
 }
 
 /**
