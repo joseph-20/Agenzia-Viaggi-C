@@ -7,7 +7,7 @@ void admin_control_panel(city_t *city_list) {
     int flag = 0;
 
     do {
-        clear_screen();
+        clear_terminal();
         printf("\nCosa si desidera fare?");
         printf("\n1. Aggiungi collegamento");
         printf("\n2. Rimuovi meta");
@@ -21,7 +21,7 @@ void admin_control_panel(city_t *city_list) {
                 // Aggiungi arco
                 break;
             case 2:
-                clear_screen();
+                clear_terminal();
                 // Rivedere
                 /*
                 delete_city(city_list);
@@ -32,8 +32,7 @@ void admin_control_panel(city_t *city_list) {
             case 0:
                 break;
             default:
-                printf("\nInserire un'opzione valida.\n");
-                csleep(3);
+                wrong_selection_message();
                 break;
         }
     } while(flag);
@@ -52,7 +51,7 @@ void delete_city(city_t *city_list) {
 int login_admin() {
     int pin = 0;
 
-    clear_screen();
+    clear_terminal();
     printf("\nInserisci il pin d'accesso amministratore: ");
     scanf("%d", &pin);
     getchar();
@@ -60,10 +59,7 @@ int login_admin() {
     if(pin == ADMIN_PIN) {
         return 1;
     } else {
-        printf("\n-------------------------");
-        printf("\n|    Password Errata    |");
-        printf("\n-------------------------\n");
-        csleep(3);
+        wrong_selection_message();
         return 0;
     }
 }

@@ -12,7 +12,7 @@ user_t *add_user_to_list(user_t *users_list, user_t *new) {
 void balance_management(user_t *user) {
     int choice = 0;
     do {
-        clear_screen();
+        clear_terminal();
 
         printf("Il saldo dell'account ammonta a €%.2f\n", user->balance);
         printf("\nCosa si desidera fare?");
@@ -30,13 +30,7 @@ void balance_management(user_t *user) {
             case 0:
                 break;
             default:
-                clear_screen();
-
-                printf("----------------------------------\n");
-                printf("|    Inserire opzione valida.    |\n");
-                printf("----------------------------------\n");
-
-                csleep(3);
+                wrong_selection_message();
                 break;
         }
     } while(choice);
@@ -47,7 +41,7 @@ void balance_top_up(user_t *user) {
     int flag = 0;
 
     do {
-        clear_screen();
+        clear_terminal();
 
         printf("\nInserire l'importo da ricaricare");
         printf("\n> ");
@@ -55,34 +49,34 @@ void balance_top_up(user_t *user) {
         getchar();
 
         if(top_up < 0) {
-            clear_screen();
+            clear_terminal();
 
             printf("+---------------------------------------------------------+\n");
             printf("|    Impossibile ricaricare di una quantita' negativa.    |\n");
             printf("+---------------------------------------------------------+\n");
 
             flag = 1;
-            csleep(3);
+            csleep(DEFAULT_SLEEP);
         } else if(top_up > __FLT_MAX__) {
             user->balance = __FLT_MAX__;
-            clear_screen();
+            clear_terminal();
 
             printf("+-------------------------------------------+\n");
             printf("|    Operazione effettuata con successo.    |\n");
             printf("+-------------------------------------------+\n");
 
             flag = 0;
-            csleep(3);
+            csleep(DEFAULT_SLEEP);
         } else {
             user->balance += top_up;
-            clear_screen();
+            clear_terminal();
 
             printf("+-------------------------------------------+\n");
             printf("|    Operazione effettuata con successo.    |\n");
             printf("+-------------------------------------------+\n");
 
             flag = 0;
-            csleep(3);
+            csleep(DEFAULT_SLEEP);
         }
     } while(flag);
 }
@@ -193,7 +187,7 @@ user_t *sign_in(user_t *user_list) {
         password[MAX_LONG];
     user_t *user = NULL;
 
-    clear_screen();
+    clear_terminal();
 
     printf("Inserisci email: ");
     scanf("%s", email);
@@ -205,14 +199,14 @@ user_t *sign_in(user_t *user_list) {
         if(check_password(user_list, email, password)) {
             user = get_user(user_list, email);
         } else {
-            clear_screen();
+            clear_terminal();
             printf("+------------------------+\n");
             printf("|    Password errata.    |\n");
             printf("+------------------------+\n");
             csleep(3);
         }
     } else {
-        clear_screen();
+        clear_terminal();
         printf("+-----------------------------------------+\n");
         printf("|    La email inserita non è corretta.    |\n");
         printf("+-----------------------------------------+\n");
@@ -296,11 +290,14 @@ void update_user_list(user_t *user_list) {
     }
 }
 
+/**
+ *  Menu utente
+ */
 void user_control_panel(user_t *user) {
     int choice = 0;
 
     do {
-        clear_screen();
+        clear_terminal();
 
         printf("Ciao, %s %s!\n", user->first_name, user->last_name);
 
@@ -315,7 +312,7 @@ void user_control_panel(user_t *user) {
 
         switch(choice) {
             case 1:
-                // UI negozio
+                booking_main(user);
                 break;
             case 2:
                 balance_management(user);
@@ -323,8 +320,7 @@ void user_control_panel(user_t *user) {
             case 0:
                 break;
             default:
-                fputs("Inserire opzione valida.", stdout);
-                csleep(3);
+                wrong_selection_message();
                 break;
         }
     } while(choice);

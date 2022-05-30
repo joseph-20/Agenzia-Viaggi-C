@@ -9,7 +9,7 @@ int main() {
     user_list = fetch_users();
 
     do {
-        clear_screen();
+        clear_terminal();
         flag = main_menu();
         switch(flag) {
             case 1:
@@ -29,11 +29,13 @@ int main() {
                 }
                 break;
             case 0:
+                clear_terminal();
+                printf("+-------------------------------+\n");
+                printf("|    Arrivederci e a presto!    |\n");
+                printf("+-------------------------------+\n");
                 break;
             default:
-                clear_screen();
-                printf("\nInserisci un'opzione valida.\n");
-                csleep(3);
+                wrong_selection_message();
                 break;
         }
     } while(flag);

@@ -6,18 +6,24 @@
 #include <string.h>
 #include <ctype.h>
 
+/**
+ *  Librerie necessarie per sleep() e Sleep()
+ */
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <unistd.h>
 #endif
 
+#define ADMIN_PIN 0000
+#define DEFAULT_SLEEP 2
+#define LINE_MAX 150
+#define LOGO_HEIGHT 6
 #define MAX 20
 #define MAX_LONG 50
-#define LINE_MAX 150
+
 #define USER_DB "database/users.txt"
 #define CITY_DB "database/city_list.txt"
-#define ADMIN_PIN 0000
 
 typedef struct city {
     int npoi;                       // # Punti di Interesse
@@ -78,6 +84,13 @@ void free_country_matrix(country_t *country);
 country_t *init_country();
 country_t *new_country();
 
+/////////////////////////////////////
+//      Funzioni Prenotazione      //
+/////////////////////////////////////
+
+void booking_main(user_t *user);
+int transport_choice();
+
 ///////////////////////////////////////////
 //      Funzioni Punti di Interesse      //
 ///////////////////////////////////////////
@@ -90,9 +103,11 @@ void new_poi(city_t *city);
 //      Funzioni UI      //
 ///////////////////////////
 
-void clear_screen();
+void clear_terminal();
 void csleep(int seconds);
 int main_menu();
+void print_logo();
+void wrong_selection_message();
 
 ///////////////////////////////
 //      Funzioni Utente      //

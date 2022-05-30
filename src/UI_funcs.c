@@ -3,7 +3,7 @@
 /**
  *  Funzione cross-platform per pulizia del terminale
  */
-void clear_screen() {
+void clear_terminal() {
 #ifdef _WIN32
     system("cls");
 #else
@@ -26,7 +26,9 @@ void csleep(int seconds) {
 int main_menu() {
     int flag = 0;
 
-    printf("1. Login");
+    print_logo();
+
+    printf("\n1. Login");
     printf("\n2. Registrati");
     printf("\n3. Accesso Amministratore");
     printf("\n0. Esci");
@@ -35,4 +37,21 @@ int main_menu() {
     getchar();
 
     return flag;
+}
+
+void print_logo() {
+    printf(" _______ _      _        _   ______        _   \n");
+    printf("|__   __(_)    | |      | | |  ____|      | |  \n");
+    printf("   | |   _  ___| | _____| |_| |__ __ _ ___| |_ \n");
+    printf("   | |  | |/ __| |/ / _ \\ __|  __/ _` / __| __|\n");
+    printf("   | |  | | (__|   <  __/ |_| | | (_| \\__ \\ |_ \n");
+    printf("   |_|  |_|\\___|_|\\_\\___|\\__|_|  \\__,_|___/\\__|\n");
+}
+
+void wrong_selection_message() {
+    clear_terminal();
+    printf("+-----------------------------------+\n");
+    printf("|    Inserire un'opzione valida.    |\n");
+    printf("+-----------------------------------+\n");
+    csleep(DEFAULT_SLEEP);
 }
