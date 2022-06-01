@@ -5,8 +5,10 @@ void booking_main(user_t *user) {
     do {
         switch(transport_choice()) {
             case 1:
+                // Viaggio aereo
                 break;
             case 2:
+                // Viaggio treno
                 break;
             case 0:
                 break;

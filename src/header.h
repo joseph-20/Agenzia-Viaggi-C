@@ -56,7 +56,7 @@ typedef struct user {
 //      Funzioni Amministratore      //
 ///////////////////////////////////////
 
-void admin_control_panel(city_t *city_list);
+void admin_control_panel(country_t *country);
 void delete_city(city_t *city_list);
 int login_admin();
 
@@ -65,24 +65,27 @@ int login_admin();
 //////////////////////////////
 
 city_t *add_city_to_list(city_t *city_list, city_t *new);
-city_t *fetch_cities(FILE *city_db);
+city_t *fetch_cities(FILE *city_db, int ncities);
 void free_city_list(city_t *city_list);
 void free_city_matrix(city_t *city);
 int get_city_index(country_t *country, char city_name[]);
 city_t *new_city();
-// remove city con realloc
-void update_city_list(city_t *city_list);
+city_t *remove_city_from_list(city_t *city_list, int index);
+void update_city_list(city_t *city_list, FILE *city_db);
 
 //////////////////////////////
 //      Funzioni Paese      //
 //////////////////////////////
 
+// remove city con realloc
 int check_city(country_t *country, char city_name[]);
 char **create_char_matrix(int row, int length);
 int **create_int_matrix(int dim);
+void free_country(country_t *country);
 void free_country_matrix(country_t *country);
 country_t *init_country();
 country_t *new_country();
+void update_country_db(country_t *country);
 
 /////////////////////////////////////
 //      Funzioni Prenotazione      //
@@ -90,14 +93,6 @@ country_t *new_country();
 
 void booking_main(user_t *user);
 int transport_choice();
-
-///////////////////////////////////////////
-//      Funzioni Punti di Interesse      //
-///////////////////////////////////////////
-
-void insert_new_poi(city_t *city);
-void insert_new_poi_name(city_t *city, char poi_name[]);
-void new_poi(city_t *city);
 
 ///////////////////////////
 //      Funzioni UI      //

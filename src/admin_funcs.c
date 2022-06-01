@@ -3,7 +3,7 @@
 /**
  *  Pannello di controllo admin
  */
-void admin_control_panel(city_t *city_list) {
+void admin_control_panel(country_t *country) {
     int flag = 0;
 
     do {

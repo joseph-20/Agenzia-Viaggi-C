@@ -7,6 +7,7 @@ int main() {
     int flag = 0;
 
     user_list = fetch_users();
+    country = init_country();
 
     do {
         clear_terminal();
@@ -40,35 +41,9 @@ int main() {
         }
     } while(flag);
 
-
-    /*
-     country = init_country();
-     printf("%d\n", country->ncities);
-
-     for(int i = 0; i < country->ncities; i++) {
-         printf("%s\n", country->cities_names[i]);
-     }
-
-     printf("npoi: %d\n", country->city_list->npoi);
-
-     for(int i = 0; i < country->city_list->npoi; i++) {
-         for(int j = 0; j < country->city_list->npoi; j++) {
-             printf("%-5d", country->city_list->poi[i][j]);
-         }
-         printf("\n");
-     }
-
-     for(int i = 0; i < country->city_list->npoi; i++) {
-         printf("%s\n", country->city_list->poi_names[i]);
-     }
-    */
-
-
     free_user_list(user_list);
+    free_country(country);
     user_list = NULL;
-    /*
-        free_city_list(city_list);
-        city_list = NULL;
-     */
+    country = NULL;
     return 0;
 }

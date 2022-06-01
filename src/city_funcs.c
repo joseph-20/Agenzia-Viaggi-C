@@ -15,43 +15,45 @@ city_t *add_city_to_list(city_t *city_list, city_t *new) {
 /**
  *  Fetch delle città e dei loro punti di interesse dal file/database
  */
-city_t *fetch_cities(FILE *city_db) {
+city_t *fetch_cities(FILE *city_db, int ncities) {
     int i = 0,
         j = 0,
+        k = 0,
         tmp = 0;
     char trash;
     city_t *city_list = NULL,
         *new = NULL;
 
-    new = new_city();
-    if(!new) {
-        printf("Errore: impossibile allocare citta'.\n");
-        return NULL;
-    } else {
-        fscanf(city_db, "%d", &new->npoi);
+    for(k = 0; k < ncities; k++) {
+        new = new_city();
+        if(!new) {
+            printf("Errore: impossibile allocare citta'.\n");
+            return NULL;
+        } else {
+            fscanf(city_db, "%d", &new->npoi);
 
-        fscanf(city_db, "%c", &trash);
+            fscanf(city_db, "%c", &trash);
 
-        new->poi = create_int_matrix(new->npoi);
-        new->poi_names = create_char_matrix(new->npoi, MAX_LONG);
+            new->poi = create_int_matrix(new->npoi);
+            new->poi_names = create_char_matrix(new->npoi, MAX_LONG);
 
-        for(i = 0; i < new->npoi; i++) {
-            for(j = 0; j < new->npoi; j++) {
-                fscanf(city_db, "%d", &new->poi[i][j]);
+            for(i = 0; i < new->npoi; i++) {
+                for(j = 0; j < new->npoi; j++) {
+                    fscanf(city_db, "%d", &new->poi[i][j]);
+                }
             }
+
+            fscanf(city_db, "%c", &trash);
+
+            for(i = 0; i < new->npoi; i++) {
+                fgets(new->poi_names[i], MAX_LONG, city_db);
+                new->poi_names[i][strcspn(new->poi_names[i], "\n")] = 0;
+            }
+
+            city_list = add_city_to_list(city_list, new);
         }
-
-        fscanf(city_db, "%c", &trash);
-
-        for(i = 0; i < new->npoi; i++) {
-            fgets(new->poi_names[i], MAX_LONG, city_db);
-            new->poi_names[i][strcspn(new->poi_names[i], "\n")] = 0;
-        }
-
-        city_list = add_city_to_list(city_list, new);
-
-        return city_list;
     }
+    return city_list;
 }
 
 /**
@@ -78,12 +80,22 @@ void free_city_matrix(city_t *city) {
         free(city->poi[i]);
     }
     free(city->poi);
-    city->poi = NULL;
+
     for(i = 0; i < city->npoi; i++) {
         free(city->poi_names[i]);
     }
     free(city->poi_names);
+
+    city->poi = NULL;
     city->poi_names = NULL;
+}
+
+int get_city_index(country_t *country, char city_name[]) {
+    int i = 0;
+    while(strcmp(country->cities_names[i], city_name) != 0) {
+        i++;
+    }
+    return i;
 }
 
 /**
@@ -107,44 +119,42 @@ city_t *new_city() {
 /**
  *  Cancellazione di una città dalla lista
  */
-city_t *remove_city_from_list(country_t *country, int index) {
+city_t *remove_city_from_list(city_t *city_list, int index) {
+    city_t *tmp = NULL;
 
-}
-
-int get_city_index(country_t *country, char city_name[]) {
-    int i = 0;
-    while(strcmp(country->cities_names[i], city_name) != 0) {
-        i++;
+    if(index == 0) {
+        tmp = city_list;
+        city_list = city_list->next;
+        free_city_matrix(tmp);
+        free(tmp);
+        tmp = NULL;
+    } else {
+        city_list->next = remove_city_from_list(city_list->next, index - 1);
     }
-    return i;
-}
 
+    return city_list;
+}
 /**
  * Ristampa la lista nel file/database
  */
-void update_city_list(city_t *city_list) {
+void update_city_list(city_t *city_list, FILE *city_db) {
     int i = 0,
         j = 0;
-    FILE *cities = fopen(CITY_DB, "w");
-    if(!cities) {
-        fputs("Impossibile trovare e/o aggiornare il database citta'.", stdout);
-    } else {
-        while(city_list) {
-            fprintf(cities, "%d\n", city_list->npoi);
 
-            for(i = 0; i < city_list->npoi; i++) {
-                for(j = 0; j < city_list->npoi - 1; j++) {
-                    fprintf(cities, "%d ", city_list->poi[i][j]);
-                }
-                fprintf(cities, "%d\n", city_list->poi[i][j]);
+    while(city_list) {
+        fprintf(city_db, "%d\n", city_list->npoi);
+
+        for(i = 0; i < city_list->npoi; i++) {
+            for(j = 0; j < city_list->npoi - 1; j++) {
+                fprintf(city_db, "%d ", city_list->poi[i][j]);
             }
-
-            for(i = 0; i < city_list->npoi; i++) {
-                fprintf(cities, "%s\n", city_list->poi_names[i]);
-            }
-
-            city_list = city_list->next;
+            fprintf(city_db, "%d\n", city_list->poi[i][j]);
         }
-        fclose(cities);
+
+        for(i = 0; i < city_list->npoi; i++) {
+            fprintf(city_db, "%s\n", city_list->poi_names[i]);
+        }
+
+        city_list = city_list->next;
     }
 }
