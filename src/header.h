@@ -15,7 +15,7 @@
 #include <unistd.h>
 #endif
 
-#define ADMIN_PIN 0000
+#define ADMIN_PIN 1234
 #define DEFAULT_SLEEP 2
 #define LINE_MAX 150
 #define LOGO_HEIGHT 6
@@ -57,8 +57,8 @@ typedef struct user {
 ///////////////////////////////////////
 
 void admin_control_panel(country_t *country);
-void delete_city(city_t *city_list);
 int login_admin();
+void remove_city(country_t *country);
 
 //////////////////////////////
 //      Funzioni Città      //
@@ -77,7 +77,6 @@ void update_city_list(city_t *city_list, FILE *city_db);
 //      Funzioni Paese      //
 //////////////////////////////
 
-// remove city con realloc
 int check_city(country_t *country, char city_name[]);
 char **create_char_matrix(int row, int length);
 int **create_int_matrix(int dim);

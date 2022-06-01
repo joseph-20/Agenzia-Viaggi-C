@@ -1,7 +1,7 @@
 #include "header.h"
 
 /**
- *  Controllo se una città è già presente nella lista
+ *  Controllo se una città è presente nella lista
  */
 int check_city(country_t *country, char city_name[]) {
     for(int i = 0; i < country->ncities; i++) {
