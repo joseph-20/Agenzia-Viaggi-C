@@ -92,10 +92,11 @@ void update_country_db(country_t *country);
 /////////////////////////////////////
 
 void booking_main(user_t *user);
-void dijkstra(int **adj_matrix, int dim, int start);
+void dijkstra_cost(country_t *country, int **cost_matrix, int start, int end);
+void dijkstra_distance(country_t *country, int **distance_matrix, int start, int end);
 int get_minimum_distance(int dim, int distance[], bool done[]);
-void print_shortest_path(int dim, int start, int distance[], int previous[]);
-void print_path(int previous[], int index);
+void print_shortest_path(country_t *country, int distance[], int previous[], int start, int end);
+void print_path(char **cities_names, int previous[], int index);
 int transport_choice();
 
 ///////////////////////////

@@ -55,7 +55,8 @@ int main() {
          } while(flag);
       */
 
-    dijkstra(country->city_distances_t, country->ncities, 2);
+    dijkstra_distance(country, country->city_distances_t, 4, 2);
+    dijkstra_cost(country, country->city_costs_t, 4, 2);
 
     free_user_list(user_list);
     free_country(country);

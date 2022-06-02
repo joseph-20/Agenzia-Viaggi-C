@@ -23,6 +23,7 @@ void admin_control_panel(country_t *country) {
             case 2:
                 clear_terminal();
                 remove_city(country);
+                // Aggiornamento database
                 csleep(DEFAULT_SLEEP);
                 break;
             case 0:
