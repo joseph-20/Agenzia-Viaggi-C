@@ -1,10 +1,11 @@
 #ifndef HEADER_H
 #define HEADER_H
 
+#include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 /**
  *  Librerie necessarie per sleep() e Sleep()
@@ -91,6 +92,10 @@ void update_country_db(country_t *country);
 /////////////////////////////////////
 
 void booking_main(user_t *user);
+void dijkstra(int **adj_matrix, int dim, int start);
+int get_minimum_distance(int dim, int distance[], bool done[]);
+void print_shortest_path(int dim, int start, int distance[], int previous[]);
+void print_path(int previous[], int index);
 int transport_choice();
 
 ///////////////////////////

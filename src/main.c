@@ -21,39 +21,41 @@ int main() {
         }
      */
 
+     /*
+         do {
+             clear_terminal();
+             flag = main_menu();
+             switch(flag) {
+                 case 1:
+                     user = sign_in(user_list);
+                     if(user != NULL) {
+                         user_control_panel(user);
+                         user = NULL;
+                         update_user_list(user_list);
+                     }
+                     break;
+                 case 2:
+                     user_list = sign_up(user_list);
+                     break;
+                 case 3:
+                     if(login_admin()) {
+                         admin_control_panel(country);
+                     }
+                     break;
+                 case 0:
+                     clear_terminal();
+                     printf("+-------------------------------+\n");
+                     printf("|    Arrivederci e a presto!    |\n");
+                     printf("+-------------------------------+\n");
+                     break;
+                 default:
+                     wrong_selection_message();
+                     break;
+             }
+         } while(flag);
+      */
 
-    do {
-        clear_terminal();
-        flag = main_menu();
-        switch(flag) {
-            case 1:
-                user = sign_in(user_list);
-                if(user != NULL) {
-                    user_control_panel(user);
-                    user = NULL;
-                    update_user_list(user_list);
-                }
-                break;
-            case 2:
-                user_list = sign_up(user_list);
-                break;
-            case 3:
-                if(login_admin()) {
-                    admin_control_panel(country);
-                }
-                break;
-            case 0:
-                clear_terminal();
-                printf("+-------------------------------+\n");
-                printf("|    Arrivederci e a presto!    |\n");
-                printf("+-------------------------------+\n");
-                break;
-            default:
-                wrong_selection_message();
-                break;
-        }
-    } while(flag);
-
+    dijkstra(country->city_distances_t, country->ncities, 2);
 
     free_user_list(user_list);
     free_country(country);
