@@ -8,55 +8,41 @@ int main() {
 
     user_list = fetch_users();
     country = init_country();
-    /*
-        for(int i = 0; i < country->ncities; i++) {
-            printf("%s\n", country->cities_names[i]);
+
+    do {
+        clear_terminal();
+        flag = main_menu();
+        switch(flag) {
+            case 1:
+                user = sign_in(user_list);
+                if(user != NULL) {
+                    user_control_panel(user, country);
+                    user = NULL;
+                    update_user_list(user_list);
+                }
+                break;
+            case 2:
+                user_list = sign_up(user_list);
+                break;
+            case 3:
+                if(login_admin()) {
+                    admin_control_panel(country);
+                }
+                break;
+            case 0:
+                clear_terminal();
+                printf("+-------------------------------+\n");
+                printf("|    Arrivederci e a presto!    |\n");
+                printf("+-------------------------------+\n");
+                break;
+            default:
+                wrong_selection_message();
+                break;
         }
+    } while(flag);
 
-        for(int i = 0; i < country->ncities; i++) {
-            for(int j = 0; j < country->ncities; j++) {
-                printf("%-5d", country->city_costs_t[i][j]);
-            }
-            printf("\n");
-        }
-     */
 
-     /*
-         do {
-             clear_terminal();
-             flag = main_menu();
-             switch(flag) {
-                 case 1:
-                     user = sign_in(user_list);
-                     if(user != NULL) {
-                         user_control_panel(user);
-                         user = NULL;
-                         update_user_list(user_list);
-                     }
-                     break;
-                 case 2:
-                     user_list = sign_up(user_list);
-                     break;
-                 case 3:
-                     if(login_admin()) {
-                         admin_control_panel(country);
-                     }
-                     break;
-                 case 0:
-                     clear_terminal();
-                     printf("+-------------------------------+\n");
-                     printf("|    Arrivederci e a presto!    |\n");
-                     printf("+-------------------------------+\n");
-                     break;
-                 default:
-                     wrong_selection_message();
-                     break;
-             }
-         } while(flag);
-      */
-
-    dijkstra_distance(country, country->city_distances_t, 4, 2);
-    dijkstra_cost(country, country->city_costs_t, 4, 2);
+    dijkstra_city(country->city_list, 0, 2);
 
     free_user_list(user_list);
     free_country(country);

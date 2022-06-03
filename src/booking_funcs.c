@@ -1,14 +1,17 @@
 #include "header.h"
 
-void booking_main(user_t *user) {
-    int flag = 0;
+void booking_main(user_t *user, country_t *country) {
+    int flag = 0,
+        city_index = 0;
     do {
         switch(transport_choice()) {
             case 1:
-                // Viaggio aereo
+                city_index = travel_by_plane(user, country);
+                book_hotel(country, city_index, 1);
                 break;
             case 2:
-                // Viaggio treno
+                city_index = travel_by_train(user, country);
+                book_hotel(country, city_index, 0);
                 break;
             case 0:
                 break;
@@ -16,16 +19,124 @@ void booking_main(user_t *user) {
                 wrong_selection_message();
                 break;
         }
-    } while(flag);
+    } while(flag > 2);
+
+
 }
 
-void dijkstra_cost(country_t *country, int **cost_matrix, int start, int end) {
+void book_hotel(country_t *country, int city_index, int is_plane) {
+    city_t *city_ptr = NULL;
+    int choice = 0,
+        i = 0;
+
+    clear_terminal();
+    printf("Scegli l'hotel da prenotare");
+    city_ptr = country->city_list;
+    for(i = 0; i < city_index; i++) {
+        city_ptr = city_ptr->next;
+    }
+    for(i = 2; i < city_ptr->npoi; i++) {
+        printf("\n%d. %s", i - 1, city_ptr->poi_names[i]);
+    }
+    printf("\n> ");
+    scanf("%d", &choice);
+
+    choice += 1;
+
+    if(is_plane) {
+        dijkstra_city(city_ptr, 0, choice);
+    } else {
+        dijkstra_city(city_ptr, 1, choice);
+    }
+}
+
+void dijkstra_city(city_t *city, int start, int end) {
+    int *distance = (int *)calloc(city->npoi, sizeof(int)),
+        *previous = (int *)calloc(city->npoi, sizeof(int)),
+        i = 0,
+        j = 0,
+        u = 0,
+        hr = 0,
+        min = 0;
+    bool *done = (bool *)calloc(city->npoi, sizeof(bool));
+    float dist = 0;
+
+    for(i = 0; i < city->npoi; i++) {
+        distance[i] = __INT_MAX__;
+        previous[i] = -1;
+    }
+
+    distance[start] = 0;
+
+    for(i = 0; i < city->npoi - 1; i++) {
+        // Trova il vertice con distanza minima tra i vertici che non sono stati ancora processati
+        // Nella prima iterazione u è sempre uguale a start
+        u = get_minimum_distance(city->npoi, distance, done);
+        // Segna il vertice trovato come processato
+        done[u] = true;
+        // Aggiorna i valori delle distanze per i vertici adiacenti a quello trovato
+        for(j = 0; j < city->npoi; j++) {
+            // Aggiorna la distanza con j solo se questo non è stato processato,
+            // se c'è un arco tra u e j e se il peso totale del percorso da start
+            // a j passando per u è più piccolo del valore attuale di distance[j]
+            if(done[j] == false && city->poi[u][j] && distance[u] + city->poi[u][j] < distance[j]) {
+                previous[j] = u;
+                distance[j] = distance[u] + city->poi[u][j];
+            }
+        }
+    }
+
+    i = end;
+    do {
+        dist += city->poi[i][previous[i]] * 1.5;
+        i = previous[i];
+    } while(previous[i] != -1);
+
+    if(dist > 60) {
+        hr = dist / 60;
+        min = dist / 60;
+    } else {
+        min = dist;
+    }
+
+    print_shortest_path(city->poi_names, distance, previous, start, end);
+
+    printf("Durata del viaggio: ");
+
+    if(hr != 0) {
+        if(hr > 1) {
+            printf("%d ore e ", hr);
+        } else if(hr == 1) {
+            printf("%d ora e ", hr);
+        }
+        if(min > 1) {
+            printf("%d minuti.\n", min);
+        } else if(min == 1) {
+            printf("%d minuto.\n", min);
+        }
+    } else {
+        if(min > 1) {
+            printf("%d minuti.\n", min);
+        } else if(min == 1) {
+            printf("%d minuto.\n", min);
+        }
+    }
+
+    free(distance);
+    free(previous);
+    free(done);
+}
+
+float dijkstra_cost(country_t *country, int **cost_matrix, int **distance_matrix, int start, int end) {
     int *distance = (int *)calloc(country->ncities, sizeof(int)),
         *previous = (int *)calloc(country->ncities, sizeof(int)),
         i = 0,
         j = 0,
-        u = 0;
-    float cost = 0;
+        u = 0,
+        hr = 0,
+        min = 0;
+    float cost = 0,
+        dist = 0;
     bool *done = (bool *)calloc(country->ncities, sizeof(bool));
 
     // Inizializziamo le distanze ad infinito
@@ -60,18 +171,48 @@ void dijkstra_cost(country_t *country, int **cost_matrix, int start, int end) {
     i = end;
     do {
         cost += cost_matrix[i][previous[i]];
+        dist += distance_matrix[i][previous[i]] * 0.1;
         i = previous[i];
     } while(previous[i] != -1);
 
-    print_shortest_path(country, distance, previous, start, end);
-    printf("Costo del viaggio: €%.2f\n", cost);
+    if(dist > 60) {
+        hr = dist / 60;
+        min = dist / 60;
+    } else {
+        min = dist;
+    }
+
+    print_shortest_path(country->cities_names, distance, previous, start, end);
+    printf("Costo del viaggio: €%.2f", cost);
+    printf("\nDurata del viaggio: ");
+
+    if(hr != 0) {
+        if(hr > 1) {
+            printf("%d ore e ", hr);
+        } else if(hr == 1) {
+            printf("%d ora e ", hr);
+        }
+        if(min > 1) {
+            printf("%d minuti.\n", min);
+        } else if(min == 1) {
+            printf("%d minuto.\n", min);
+        }
+    } else {
+        if(min > 1) {
+            printf("%d minuti.\n", min);
+        } else if(min == 1) {
+            printf("%d minuto.\n", min);
+        }
+    }
 
     free(distance);
     free(previous);
     free(done);
+
+    return cost;
 }
 
-void dijkstra_distance(country_t *country, int **distance_matrix, int start, int end) {
+float dijkstra_distance(country_t *country, int **cost_matrix, int **distance_matrix, int start, int end) {
     int *distance = (int *)calloc(country->ncities, sizeof(int)),
         *previous = (int *)calloc(country->ncities, sizeof(int)),
         i = 0,
@@ -79,7 +220,8 @@ void dijkstra_distance(country_t *country, int **distance_matrix, int start, int
         u = 0,
         min = 0,
         hr = 0;
-    float cost = 0;
+    float cost = 0,
+        dist = 0;
     bool *done = (bool *)calloc(country->ncities, sizeof(bool));
 
     // Inizializziamo le distanze ad infinito
@@ -113,19 +255,21 @@ void dijkstra_distance(country_t *country, int **distance_matrix, int start, int
 
     i = end;
     do {
-        cost += distance_matrix[i][previous[i]] * 0.1;
+        dist += distance_matrix[i][previous[i]] * 0.1;
+        cost += cost_matrix[i][previous[i]];
         i = previous[i];
     } while(previous[i] != -1);
 
-    if(cost > 60) {
-        hr = cost / 60;
-        min = cost / 60;
+    if(dist > 60) {
+        hr = dist / 60;
+        min = dist / 60;
     } else {
-        min = cost;
+        min = dist;
     }
 
-    print_shortest_path(country, distance, previous, start, end);
-    printf("Durata del viaggio: ");
+    print_shortest_path(country->cities_names, distance, previous, start, end);
+    printf("Costo del viaggio: €%.2f", cost);
+    printf("\nDurata del viaggio: ");
     if(hr != 0) {
         if(hr > 1) {
             printf("%d ore e ", hr);
@@ -148,6 +292,8 @@ void dijkstra_distance(country_t *country, int **distance_matrix, int start, int
     free(distance);
     free(previous);
     free(done);
+
+    return cost;
 }
 
 int get_minimum_distance(int dim, int distance[], bool done[]) {
@@ -163,18 +309,18 @@ int get_minimum_distance(int dim, int distance[], bool done[]) {
     return min_index;
 }
 
-void print_shortest_path(country_t *country, int distance[], int previous[], int start, int end) {
-    printf("\n%s -> ", country->cities_names[start]);
-    print_path(country->cities_names, previous, end);
+void print_shortest_path(char **names, int distance[], int previous[], int start, int end) {
+    printf("\n%s -> ", names[start]);
+    print_path(names, previous, end);
     printf("|\n");
 }
 
-void print_path(char **cities_names, int previous[], int index) {
+void print_path(char **names, int previous[], int index) {
     if(previous[index] == -1) {
         return;
     } else {
-        print_path(cities_names, previous, previous[index]);
-        printf("%s -> ", cities_names[index]);
+        print_path(names, previous, previous[index]);
+        printf("%s -> ", names[index]);
     }
 }
 
@@ -199,4 +345,258 @@ int transport_choice() {
     } while(choice < 0 || choice > 2);
 
     return choice;
+}
+
+int travel_by_plane(user_t *user, country_t *country) {
+    int start = 0,
+        end = 0,
+        choice = 0,
+        i = 0;
+    float cost_fast = 0,
+        cost_cheap = 0;
+    char confirm = 0;
+
+    clear_terminal();
+
+    printf("Scegli la citta' di partenza:");
+    for(i = 0; i < country->ncities; i++) {
+        printf("\n%d. %s", i, country->cities_names[i]);
+    }
+    printf("\n> ");
+    scanf("%d", &start);
+
+    printf("\nSeleziona la citta' di arrivo:");
+    for(i = 0; i < country->ncities; i++) {
+        printf("\n%d. %s", i, country->cities_names[i]);
+    }
+    printf("\n> ");
+    scanf("%d", &end);
+
+    if(start == end) {
+        clear_terminal();
+        printf("+---------------------------------+\n");
+        printf("|    Seleziona citta' diverse.    |\n");
+        printf("+---------------------------------+\n");
+        csleep(DEFAULT_SLEEP);
+
+        return -1;
+    } else {
+        printf("\nViaggio piu' veloce:");
+        cost_fast = dijkstra_distance(country, country->city_costs_p, country->city_distances_p, start, end);
+
+        printf("\nViaggio piu' economico:");
+        cost_cheap = dijkstra_cost(country, country->city_costs_p, country->city_distances_p, start, end);
+
+        do {
+            printf("\nQuale viaggio desideri prenotare?");
+            printf("\n1. Viaggio piu' veloce");
+            printf("\n2. Viaggio piu' economico");
+            printf("\n0. Annulla e torna indietro");
+            printf("\n> ");
+            scanf("%d", &choice);
+
+            switch(choice) {
+                case 1:
+                    if(user->balance < cost_fast) {
+                        clear_terminal();
+                        printf("Il tuo saldo non e' sufficiente, vuoi ricaricare? (y/n): ");
+                        scanf("%c", &confirm);
+                        if(confirm == 'y') {
+                            balance_top_up(user);
+
+                            user->balance -= cost_fast;
+
+                            clear_terminal();
+                            printf("+-----------------------------------------+\n");
+                            printf("|    Acquisto completato con successo!    |\n");
+                            printf("+-----------------------------------------+\n");
+                            csleep(DEFAULT_SLEEP);
+                        } else {
+                            clear_terminal();
+                            printf("+-----------------------------+\n");
+                            printf("|    Operazione annullata.    |\n");
+                            printf("+-----------------------------+\n");
+                            csleep(DEFAULT_SLEEP);
+                        }
+                    } else {
+
+                        user->balance -= cost_fast;
+                        clear_terminal();
+                        printf("+-----------------------------------------+\n");
+                        printf("|    Acquisto completato con successo!    |\n");
+                        printf("+-----------------------------------------+\n");
+                        csleep(DEFAULT_SLEEP);
+                    }
+                    break;
+                case 2:
+                    if(user->balance < cost_cheap) {
+                        clear_terminal();
+                        printf("Il tuo saldo non e' sufficiente, vuoi ricaricare? (y/n): ");
+                        scanf("%c", &confirm);
+                        if(confirm == 'y') {
+                            balance_top_up(user);
+
+                            user->balance -= cost_cheap;
+
+                            clear_terminal();
+                            printf("+-----------------------------------------+\n");
+                            printf("|    Acquisto completato con successo!    |\n");
+                            printf("+-----------------------------------------+\n");
+                            csleep(DEFAULT_SLEEP);
+                        } else {
+                            clear_terminal();
+                            printf("+-----------------------------+\n");
+                            printf("|    Operazione annullata.    |\n");
+                            printf("+-----------------------------+\n");
+                            csleep(DEFAULT_SLEEP);
+                        }
+                    } else {
+
+                        user->balance -= cost_cheap;
+                        clear_terminal();
+                        printf("+-----------------------------------------+\n");
+                        printf("|    Acquisto completato con successo!    |\n");
+                        printf("+-----------------------------------------+\n");
+                        csleep(DEFAULT_SLEEP);
+                    }
+                    break;
+                case 0:
+                    break;
+                default:
+                    clear_terminal();
+                    wrong_selection_message();
+                    csleep(DEFAULT_SLEEP);
+                    break;
+            }
+        } while(choice > 2);
+
+        return end;
+    }
+}
+
+int travel_by_train(user_t *user, country_t *country) {
+    int start = 0,
+        end = 0,
+        choice = 0,
+        i = 0;
+    float cost_fast = 0,
+        cost_cheap = 0;
+    char confirm = 0;
+
+    clear_terminal();
+
+    printf("Scegli la citta' di partenza:");
+    for(i = 0; i < country->ncities; i++) {
+        printf("\n%d. %s", i, country->cities_names[i]);
+    }
+    printf("\n> ");
+    scanf("%d", &start);
+
+    printf("\nSeleziona la citta' di arrivo:");
+    for(i = 0; i < country->ncities; i++) {
+        printf("\n%d. %s", i, country->cities_names[i]);
+    }
+    printf("\n> ");
+    scanf("%d", &end);
+
+    if(start == end) {
+        clear_terminal();
+        printf("+---------------------------------+\n");
+        printf("|    Seleziona citta' diverse.    |\n");
+        printf("+---------------------------------+\n");
+        csleep(DEFAULT_SLEEP);
+
+        return -1;
+    } else {
+        printf("\nViaggio piu' veloce:");
+        cost_fast = dijkstra_distance(country, country->city_costs_t, country->city_distances_t, start, end);
+
+        printf("\nViaggio piu' economico:");
+        cost_cheap = dijkstra_cost(country, country->city_costs_t, country->city_distances_t, start, end);
+
+        do {
+            printf("\nQuale viaggio desideri prenotare?");
+            printf("\n1. Viaggio piu' veloce");
+            printf("\n2. Viaggio piu' economico");
+            printf("\n0. Annulla e torna indietro");
+            printf("\n> ");
+            scanf("%d", &choice);
+
+            switch(choice) {
+                case 1:
+                    if(user->balance < cost_fast) {
+                        clear_terminal();
+                        printf("Il tuo saldo non e' sufficiente, vuoi ricaricare? (y/n): ");
+                        scanf("%c", &confirm);
+                        if(confirm == 'y') {
+                            balance_top_up(user);
+
+                            user->balance -= cost_fast;
+
+                            clear_terminal();
+                            printf("+-----------------------------------------+\n");
+                            printf("|    Acquisto completato con successo!    |\n");
+                            printf("+-----------------------------------------+\n");
+                            csleep(DEFAULT_SLEEP);
+                        } else {
+                            clear_terminal();
+                            printf("+-----------------------------+\n");
+                            printf("|    Operazione annullata.    |\n");
+                            printf("+-----------------------------+\n");
+                            csleep(DEFAULT_SLEEP);
+                        }
+                    } else {
+
+                        user->balance -= cost_fast;
+                        clear_terminal();
+                        printf("+-----------------------------------------+\n");
+                        printf("|    Acquisto completato con successo!    |\n");
+                        printf("+-----------------------------------------+\n");
+                        csleep(DEFAULT_SLEEP);
+                    }
+                    break;
+                case 2:
+                    if(user->balance < cost_cheap) {
+                        clear_terminal();
+                        printf("Il tuo saldo non e' sufficiente, vuoi ricaricare? (y/n): ");
+                        scanf("%c", &confirm);
+                        if(confirm == 'y') {
+                            balance_top_up(user);
+
+                            user->balance -= cost_cheap;
+
+                            clear_terminal();
+                            printf("+-----------------------------------------+\n");
+                            printf("|    Acquisto completato con successo!    |\n");
+                            printf("+-----------------------------------------+\n");
+                            csleep(DEFAULT_SLEEP);
+                        } else {
+                            clear_terminal();
+                            printf("+-----------------------------+\n");
+                            printf("|    Operazione annullata.    |\n");
+                            printf("+-----------------------------+\n");
+                            csleep(DEFAULT_SLEEP);
+                        }
+                    } else {
+
+                        user->balance -= cost_cheap;
+                        clear_terminal();
+                        printf("+-----------------------------------------+\n");
+                        printf("|    Acquisto completato con successo!    |\n");
+                        printf("+-----------------------------------------+\n");
+                        csleep(DEFAULT_SLEEP);
+                    }
+                    break;
+                case 0:
+                    break;
+                default:
+                    clear_terminal();
+                    wrong_selection_message();
+                    csleep(DEFAULT_SLEEP);
+                    break;
+            }
+        } while(choice > 2);
+
+        return end;
+    }
 }

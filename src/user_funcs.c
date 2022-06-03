@@ -293,7 +293,7 @@ void update_user_list(user_t *user_list) {
 /**
  *  Menu utente
  */
-void user_control_panel(user_t *user) {
+void user_control_panel(user_t *user, country_t *country) {
     int choice = 0;
 
     do {
@@ -312,7 +312,7 @@ void user_control_panel(user_t *user) {
 
         switch(choice) {
             case 1:
-                booking_main(user);
+                booking_main(user, country);
                 break;
             case 2:
                 balance_management(user);

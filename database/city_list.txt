@@ -24,56 +24,68 @@ Torino
 409 249 0 232 318
 190 478 232 0 525
 712 127 318 525 0
-5
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
+7
+0 2 4 6 9 0 0
+2 0 0 2 3 8 3
+4 0 0 2 5 0 5
+6 2 2 0 7 10 7
+9 3 5 7 0 7 0
+0 8 0 10 7 0 0
+0 3 5 7 0 0 0
 Aeroporto Internazionale di Napoli
 Stazione di Napoli Centrale
-Test
-Test
-Test
-5
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
+Hotel Palazzo Caracciolo
+Hotel Villa Elisio
+Grand Hotel Vesuvio
+JFK Hotel
+Grand Hotel Santa Lucia
+7
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
 Aeroporto Milano-Malpensa
 Milano Centrale
 Test
 Test
 Test
-5
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
+7
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
 Aeroporto Amerigo Vespucci
 Stazione Santa Maria Novella
 Test
 Test
 Test
-5
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
+7
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
 Aeroporto Leonardo da Vinci
 Roma Termini
 Test
 Test
 Test
-5
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
-0 0 0 0 0
+7
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
 Aeroporto Internazionale di Torino
 Stazione Porta nuova
 Test

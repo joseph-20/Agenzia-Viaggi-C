@@ -91,13 +91,17 @@ void update_country_db(country_t *country);
 //      Funzioni Prenotazione      //
 /////////////////////////////////////
 
-void booking_main(user_t *user);
-void dijkstra_cost(country_t *country, int **cost_matrix, int start, int end);
-void dijkstra_distance(country_t *country, int **distance_matrix, int start, int end);
+void booking_main(user_t *user, country_t *country);
+void book_hotel(country_t *country, int city_index, int is_plane);
+void dijkstra_city(city_t *city, int start, int end);
+float dijkstra_cost(country_t *country, int **cost_matrix, int **distance_matrix, int start, int end);
+float dijkstra_distance(country_t *country, int **cost_matrix, int **distance_matrix, int start, int end);
 int get_minimum_distance(int dim, int distance[], bool done[]);
-void print_shortest_path(country_t *country, int distance[], int previous[], int start, int end);
-void print_path(char **cities_names, int previous[], int index);
+void print_shortest_path(char **names, int distance[], int previous[], int start, int end);
+void print_path(char **names, int previous[], int index);
 int transport_choice();
+int travel_by_plane(user_t *user, country_t *country);
+int travel_by_train(user_t *user, country_t *country);
 
 ///////////////////////////
 //      Funzioni UI      //
@@ -125,6 +129,6 @@ user_t *sign_in(user_t *user_list);
 user_t *sign_up(user_t *user_list);
 user_t *new_user(char first_name[], char last_name[], char email[], char password[], float balance);
 void update_user_list(user_t *user_list);
-void user_control_panel(user_t *user);
+void user_control_panel(user_t *user, country_t *country);
 
 #endif
