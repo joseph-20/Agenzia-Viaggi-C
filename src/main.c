@@ -41,9 +41,6 @@ int main() {
         }
     } while(flag);
 
-
-    dijkstra_city(country->city_list, 0, 2);
-
     free_user_list(user_list);
     free_country(country);
     user_list = NULL;

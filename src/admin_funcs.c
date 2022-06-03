@@ -4,11 +4,35 @@
  *  Pannello di controllo admin
  */
 void admin_control_panel(country_t *country) {
-    int flag = 0;
+    int flag = 0,
+        reports = 0;
+    int **reports_matrix = NULL;
+
+    reports = fetch_reports();
 
     do {
         clear_terminal();
-        printf("Cosa si desidera fare?");
+
+        if(reports == -1) {
+            printf("+----------------------------------------+\n");
+            printf("|    Impossibile recuperare i reports    |\n");
+            printf("+----------------------------------------+\n");
+        } else if(reports) {
+
+            reports_matrix = create_reports(reports);
+
+            if(reports == 1) {
+                printf("+---------------------------+\n");
+                printf("|    Hai 1 nuovo report!    |\n");
+                printf("+---------------------------+\n");
+            } else {
+                printf("+----------------------------+\n");
+                printf("|    Hai %-2d nuovi report!    |\n", reports);
+                printf("+----------------------------+\n");
+            }
+        }
+
+        printf("\nCosa si desidera fare?");
         printf("\n1. Aggiungi collegamento");
         printf("\n2. Rimuovi meta");
         printf("\n0. Esci");
@@ -33,6 +57,46 @@ void admin_control_panel(country_t *country) {
                 break;
         }
     } while(flag);
+
+    for(int i = 0; i < reports; i++) {
+        free(reports_matrix[i]);
+    }
+    free(reports_matrix);
+}
+
+int **create_reports(int dim) {
+    FILE *reports = fopen(REPORTS_DB, "r");
+
+    int **mat = (int **)calloc(dim, sizeof(int *));
+    for(int i = 0; i < dim; i++) {
+        mat[i] = (int *)calloc(2, sizeof(int));
+    }
+
+    for(int i = 0; i < dim; i++) {
+        for(int j = 0; j < 2; j++) {
+            fscanf(reports, "%d", &mat[i][j]);
+        }
+    }
+
+    return mat;
+}
+
+int fetch_reports() {
+    int reports_amount = 0;
+    char buffer;
+    FILE *reports = fopen(REPORTS_DB, "r");
+    if(!reports) {
+        return -1;
+    } else {
+        while(!feof(reports)) {
+            buffer = fgetc(reports);
+            if(buffer == '\n') {
+                reports_amount++;
+            }
+        }
+
+        return reports_amount;
+    }
 }
 
 /**

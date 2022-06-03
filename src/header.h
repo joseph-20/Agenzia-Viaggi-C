@@ -23,8 +23,9 @@
 #define MAX 20
 #define MAX_LONG 50
 
-#define USER_DB "database/users.txt"
 #define CITY_DB "database/city_list.txt"
+#define REPORTS_DB "database/reports.txt"
+#define USER_DB "database/users.txt"
 
 typedef struct city {
     int npoi;                       // # Punti di Interesse
@@ -58,6 +59,8 @@ typedef struct user {
 ///////////////////////////////////////
 
 void admin_control_panel(country_t *country);
+int **create_reports(int dim);
+int fetch_reports();
 int login_admin();
 void remove_city(country_t *country);
 
@@ -93,12 +96,14 @@ void update_country_db(country_t *country);
 
 void booking_main(user_t *user, country_t *country);
 void book_hotel(country_t *country, int city_index, int is_plane);
+int check_link(int **distance_matrix, int dim, int city_index);
 void dijkstra_city(city_t *city, int start, int end);
 float dijkstra_cost(country_t *country, int **cost_matrix, int **distance_matrix, int start, int end);
 float dijkstra_distance(country_t *country, int **cost_matrix, int **distance_matrix, int start, int end);
 int get_minimum_distance(int dim, int distance[], bool done[]);
 void print_shortest_path(char **names, int distance[], int previous[], int start, int end);
 void print_path(char **names, int previous[], int index);
+void report_missing_link(int start, int end);
 int transport_choice();
 int travel_by_plane(user_t *user, country_t *country);
 int travel_by_train(user_t *user, country_t *country);

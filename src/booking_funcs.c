@@ -1,5 +1,8 @@
 #include "header.h"
 
+/**
+ *  Funzione principale del meccanismo di prenotazione
+ */
 void booking_main(user_t *user, country_t *country) {
     int flag = 0,
         city_index = 0;
@@ -7,11 +10,15 @@ void booking_main(user_t *user, country_t *country) {
         switch(transport_choice()) {
             case 1:
                 city_index = travel_by_plane(user, country);
-                book_hotel(country, city_index, 1);
+                if(city_index != -1) {
+                    book_hotel(country, city_index, 1);
+                }
                 break;
             case 2:
                 city_index = travel_by_train(user, country);
-                book_hotel(country, city_index, 0);
+                if(city_index != -1) {
+                    book_hotel(country, city_index, 0);
+                }
                 break;
             case 0:
                 break;
@@ -21,9 +28,11 @@ void booking_main(user_t *user, country_t *country) {
         }
     } while(flag > 2);
 
-
 }
 
+/**
+ *  Funzione di scelta del mezzo di trasporto
+ */
 void book_hotel(country_t *country, int city_index, int is_plane) {
     city_t *city_ptr = NULL;
     int choice = 0,
@@ -50,6 +59,21 @@ void book_hotel(country_t *country, int city_index, int is_plane) {
     }
 }
 
+/**
+ *  Controllo se un nodo città ha almeno un arco entrante
+ */
+int check_link(int **distance_matrix, int dim, int city_index) {
+    for(int i = 0; i < dim; i++) {
+        if(distance_matrix[i][city_index]) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/**
+ * Funzione di Dijkstra adattata alla ricerca del percorso minimo in città
+ */
 void dijkstra_city(city_t *city, int start, int end) {
     int *distance = (int *)calloc(city->npoi, sizeof(int)),
         *previous = (int *)calloc(city->npoi, sizeof(int)),
@@ -127,6 +151,9 @@ void dijkstra_city(city_t *city, int start, int end) {
     free(done);
 }
 
+/**
+ *  Funzione di Dijkstra per la ricerca del viaggio più economico
+ */
 float dijkstra_cost(country_t *country, int **cost_matrix, int **distance_matrix, int start, int end) {
     int *distance = (int *)calloc(country->ncities, sizeof(int)),
         *previous = (int *)calloc(country->ncities, sizeof(int)),
@@ -168,6 +195,7 @@ float dijkstra_cost(country_t *country, int **cost_matrix, int **distance_matrix
         }
     }
 
+    // Calcolo del costo e del tempo di viaggio
     i = end;
     do {
         cost += cost_matrix[i][previous[i]];
@@ -175,6 +203,7 @@ float dijkstra_cost(country_t *country, int **cost_matrix, int **distance_matrix
         i = previous[i];
     } while(previous[i] != -1);
 
+    // Quantificazione del tempo di viaggio in ore e minuti
     if(dist > 60) {
         hr = dist / 60;
         min = dist / 60;
@@ -182,6 +211,9 @@ float dijkstra_cost(country_t *country, int **cost_matrix, int **distance_matrix
         min = dist;
     }
 
+    /**
+     *  Stampa delle informazioni
+     */
     print_shortest_path(country->cities_names, distance, previous, start, end);
     printf("Costo del viaggio: €%.2f", cost);
     printf("\nDurata del viaggio: ");
@@ -212,6 +244,9 @@ float dijkstra_cost(country_t *country, int **cost_matrix, int **distance_matrix
     return cost;
 }
 
+/**
+ *  Funzione di Dijkstra per la ricerca del viaggio più veloce
+ */
 float dijkstra_distance(country_t *country, int **cost_matrix, int **distance_matrix, int start, int end) {
     int *distance = (int *)calloc(country->ncities, sizeof(int)),
         *previous = (int *)calloc(country->ncities, sizeof(int)),
@@ -324,6 +359,27 @@ void print_path(char **names, int previous[], int index) {
     }
 }
 
+void report_missing_link(int start, int end) {
+    FILE *reports = fopen(REPORTS_DB, "a");
+    if(!reports) {
+        clear_terminal();
+        printf("+-----------------------------------------------+\n");
+        printf("|    Impossibile effettuare la segnalazione.    |\n");
+        printf("+-----------------------------------------------+\n");
+        csleep(DEFAULT_SLEEP);
+    } else {
+        fprintf(reports, "%d %d\n", start, end);
+
+        clear_terminal();
+        printf("+---------------------------------------------+\n");
+        printf("|    Segnalazione effettuata con successo!    |\n");
+        printf("+---------------------------------------------+\n");
+        csleep(DEFAULT_SLEEP);
+
+        fclose(reports);
+    }
+}
+
 int transport_choice() {
     int choice = 0;
 
@@ -372,7 +428,27 @@ int travel_by_plane(user_t *user, country_t *country) {
     printf("\n> ");
     scanf("%d", &end);
 
-    if(start == end) {
+    if(check_link(country->city_distances_p, country->ncities, end) == 0) {
+        clear_terminal();
+
+        printf("+------------------------------------------------------------------+\n");
+        printf("|    La citta' di destinazione selezionata non è raggiungibile.    |\n");
+        printf("|       Vorreste segnalare il problema agli amministratori?        |\n");
+        printf("+------------------------------------------------------------------+\n");
+
+        printf("\n(y/n)> ");
+        getchar();
+        scanf("%c", &confirm);
+
+        switch(confirm) {
+            case 'y':
+                report_missing_link(start, end);
+                break;
+            case 'n':
+                break;
+        }
+        return -1;
+    } else if(start == end) {
         clear_terminal();
         printf("+---------------------------------+\n");
         printf("|    Seleziona citta' diverse.    |\n");
@@ -499,7 +575,28 @@ int travel_by_train(user_t *user, country_t *country) {
     printf("\n> ");
     scanf("%d", &end);
 
-    if(start == end) {
+    if(!check_link(country->city_distances_t, country->ncities, end)) {
+        clear_terminal();
+
+        printf("+------------------------------------------------------------------+\n");
+        printf("|    La citta' di destinazione selezionata non è raggiungibile.    |\n");
+        printf("|       Vorreste segnalare il problema agli amministratori?        |\n");
+        printf("+------------------------------------------------------------------+\n");
+
+        printf("\n(y/n)> ");
+        getchar();
+        scanf("%c", &confirm);
+
+        switch(confirm) {
+            case 'y':
+                report_missing_link(start, end);
+                break;
+            case 'n':
+                break;
+        }
+
+        return -1;
+    } else if(start == end) {
         clear_terminal();
         printf("+---------------------------------+\n");
         printf("|    Seleziona citta' diverse.    |\n");
