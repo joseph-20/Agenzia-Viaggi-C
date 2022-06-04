@@ -43,7 +43,7 @@ void balance_top_up(user_t *user) {
     do {
         clear_terminal();
 
-        printf("\nInserire l'importo da ricaricare");
+        printf("Inserire l'importo da ricaricare");
         printf("\n> ");
         scanf("%f", &top_up);
         getchar();
@@ -123,6 +123,7 @@ user_t *fetch_users() {
     users = fopen(USER_DB, "r");
     if(!users) {
         printf("Impossibile aprire il database utenti.\n");
+        exit(1);
     } else {
         while(fgets(line, LINE_MAX, users) != NULL) {
 
@@ -264,6 +265,7 @@ user_t *new_user(char first_name[], char last_name[], char email[], char passwor
     user_t *new = (user_t *)malloc(sizeof(user_t));
     if(!new) {
         fputs("ERRORE: impossibile allocare memoria.", stdout);
+        csleep(DEFAULT_SLEEP);
         return NULL;
     } else {
         strcpy(new->first_name, first_name);
@@ -281,6 +283,7 @@ void update_user_list(user_t *user_list) {
     FILE *users = fopen(USER_DB, "w");
     if(!users) {
         fputs("Impossibile aggiornare il database utenti.", stdout);
+        csleep(DEFAULT_SLEEP);
     } else {
         while(user_list) {
             fprintf(users, "%s,%s,%s,%s,%.2f\n", user_list->first_name, user_list->last_name, user_list->email, user_list->password, user_list->balance);

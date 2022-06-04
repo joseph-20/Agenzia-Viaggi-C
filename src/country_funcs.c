@@ -77,11 +77,13 @@ country_t *init_country() {
     FILE *city_db = fopen(CITY_DB, "r");
     if(!city_db) {
         printf("Errore: database citta' non trovato.\n");
-        return NULL;
+        csleep(DEFAULT_SLEEP);
+        exit(1);
     } else {
         country_t *new = new_country();
         if(!new) {
             printf("\nErrore: impossibile allocare la memoria.\n");
+            csleep(DEFAULT_SLEEP);
             return NULL;
         } else {
             // Fetch del numero delle città
@@ -130,6 +132,7 @@ country_t *init_country() {
                 printf("Errore: raccolta dettagli citta' non riuscita.\n");
                 free_country_matrix(new);
                 free(new);
+                csleep(DEFAULT_SLEEP);
                 return NULL;
             }
 
@@ -161,6 +164,7 @@ void update_country_db(country_t *country) {
     FILE *city_db = fopen(CITY_DB, "w");
     if(!city_db) {
         printf("Errore: impossibile trovare e/o aggiornare il database citta'.\n");
+        csleep(DEFAULT_SLEEP);
     } else {
         fprintf(city_db, "%d\n", country->ncities);
 

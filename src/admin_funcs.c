@@ -6,8 +6,6 @@ void add_link(country_t *country, int start, int end, int is_plane) {
         dist = 0,
         cost = 0;
 
-    clear_terminal();
-
     if(is_plane) {
         dist_mat = country->city_distances_p;
         cost_mat = country->city_costs_p;
@@ -16,7 +14,9 @@ void add_link(country_t *country, int start, int end, int is_plane) {
         cost_mat = country->city_costs_t;
     }
 
-    printf("\nInserisci la distanza tra le due citta' (in km): ");
+    clear_terminal();
+
+    printf("Inserisci la distanza tra le due citta' (in km): ");
     scanf("%d", &dist);
     printf("\nInserisci il costo del viaggio tra le due citta': ");
     scanf("%d", &cost);
@@ -37,14 +37,16 @@ void add_manual_link(country_t *country) {
         is_plane = 0;
 
     clear_terminal();
+
+    printf("Vuoi aggiungere un collegamento con aereo o con treno?");
+    printf("\n0. Treno");
+    printf("\n1. Aereo\n> ");
+    scanf("%d", &is_plane);
+
+    clear_terminal();
     for(int i = 0; i < country->ncities; i++) {
         printf("\n%d. %s", i, country->cities_names[i]);
     }
-
-    printf("\nVuoi aggiungere un collegamento con aereo o con treno?");
-    printf("\n0. Treno");
-    printf("\n1. Aereo");
-    scanf("%d", &is_plane);
 
     printf("\nInserisci i numeri corrispondenti alle due citta' da collegare separati da uno spazio.\n> ");
     scanf("%d %d", &start, &end);
@@ -80,11 +82,11 @@ void admin_control_panel(country_t *country) {
             } else {
                 printf("+----------------------------+\n");
                 printf("|    Hai %-2d nuovi report!    |\n", reports_amount);
-                printf("+----------------------------+\n");
+                printf("+----------------------------+\n\n");
             }
         }
 
-        printf("\nCosa si desidera fare?");
+        printf("Cosa si desidera fare?");
         printf("\n1. Aggiungi collegamento");
         printf("\n2. Rimuovi meta");
         printf("\n3. Controlla reports");
@@ -109,6 +111,7 @@ void admin_control_panel(country_t *country) {
                 update_country_db(country);
                 break;
             case 0:
+                return;
                 break;
             default:
                 wrong_selection_message();
@@ -123,31 +126,33 @@ void admin_control_panel(country_t *country) {
 }
 
 void check_reports(country_t *country, int **reports, int reports_amount) {
-    char confirm = 0;
+    int choice = 0;
     for(int i = 0; i < reports_amount; i++) {
-        clear_terminal();
+        do {
+            clear_terminal();
 
-        printf("%d -> %d ", reports[i][0], reports[i][1]);
-        if(reports[i][2] == 1) {
-            printf("(Aereo)\n");
-        } else {
-            printf("(Treno)\n");
-        }
+            printf("%d -> %d ", reports[i][0], reports[i][1]);
+            if(reports[i][2] == 1) {
+                printf("(Aereo)\n");
+            } else {
+                printf("(Treno)\n");
+            }
 
-        printf("\nAggiungere questo collegamento? (y/n): ");
-        getchar();
-        scanf("%c", &confirm);
+            printf("\n1. Inserisci collegamento");
+            printf("\n0. Ignora report\n> ");
+            scanf("%d", &choice);
 
-        switch(confirm) {
-            case 'y':
-                add_link(country, reports[i][0], reports[i][1], reports[i][2]);
-                break;
-            case 'n':
-                break;
-            default:
-                wrong_selection_message();
-                break;
-        }
+            switch(choice) {
+                case 1:
+                    add_link(country, reports[i][0], reports[i][1], reports[i][2]);
+                    break;
+                case 0:
+                    break;
+                default:
+                    wrong_selection_message();
+                    break;
+            }
+        } while(choice > 1);
     }
 }
 

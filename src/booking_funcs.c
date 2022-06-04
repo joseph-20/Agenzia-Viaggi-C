@@ -38,25 +38,37 @@ void book_hotel(country_t *country, int city_index, int is_plane) {
     int choice = 0,
         i = 0;
 
-    clear_terminal();
-    printf("Scegli l'hotel da prenotare");
     city_ptr = country->city_list;
-    for(i = 0; i < city_index; i++) {
-        city_ptr = city_ptr->next;
-    }
-    for(i = 2; i < city_ptr->npoi; i++) {
-        printf("\n%d. %s", i - 1, city_ptr->poi_names[i]);
-    }
-    printf("\n> ");
-    scanf("%d", &choice);
+    do {
+        clear_terminal();
+        printf("Scegli l'hotel da prenotare");
+        city_ptr = country->city_list;
+        for(i = 0; i < city_index; i++) {
+            city_ptr = city_ptr->next;
+        }
+        for(i = 2; i < city_ptr->npoi; i++) {
+            printf("\n%d. %s", i - 1, city_ptr->poi_names[i]);
+        }
+        printf("\n> ");
+        scanf("%d", &choice);
 
-    choice += 1;
+        choice += 1;
+        if(choice >= city_ptr->npoi || choice < 0) {
+            wrong_selection_message();
+        }
+    } while(choice >= city_ptr->npoi || choice < 0);
 
+    clear_terminal();
     if(is_plane) {
         dijkstra_city(city_ptr, 0, choice);
     } else {
         dijkstra_city(city_ptr, 1, choice);
     }
+    print_divider();
+
+    printf("\nPremere invio per terminare...");
+    getchar();
+    getchar();
 }
 
 /**
@@ -481,6 +493,7 @@ int travel_by_plane(user_t *user, country_t *country) {
                     if(user->balance < cost_fast) {
                         clear_terminal();
                         printf("Il tuo saldo non e' sufficiente, vuoi ricaricare? (y/n): ");
+                        getchar();
                         scanf("%c", &confirm);
                         if(confirm == 'y') {
                             balance_top_up(user);
@@ -513,6 +526,7 @@ int travel_by_plane(user_t *user, country_t *country) {
                     if(user->balance < cost_cheap) {
                         clear_terminal();
                         printf("Il tuo saldo non e' sufficiente, vuoi ricaricare? (y/n): ");
+                        getchar();
                         scanf("%c", &confirm);
                         if(confirm == 'y') {
                             balance_top_up(user);
@@ -633,6 +647,7 @@ int travel_by_train(user_t *user, country_t *country) {
                     if(user->balance < cost_fast) {
                         clear_terminal();
                         printf("Il tuo saldo non e' sufficiente, vuoi ricaricare? (y/n): ");
+                        getchar();
                         scanf("%c", &confirm);
                         if(confirm == 'y') {
                             balance_top_up(user);
@@ -665,6 +680,7 @@ int travel_by_train(user_t *user, country_t *country) {
                     if(user->balance < cost_cheap) {
                         clear_terminal();
                         printf("Il tuo saldo non e' sufficiente, vuoi ricaricare? (y/n): ");
+                        getchar();
                         scanf("%c", &confirm);
                         if(confirm == 'y') {
                             balance_top_up(user);
