@@ -1,33 +1,85 @@
 #include "header.h"
 
+void add_link(country_t *country, int start, int end, int is_plane) {
+    int **dist_mat = NULL,
+        **cost_mat = NULL,
+        dist = 0,
+        cost = 0;
+
+    clear_terminal();
+
+    if(is_plane) {
+        dist_mat = country->city_distances_p;
+        cost_mat = country->city_costs_p;
+    } else {
+        dist_mat = country->city_distances_t;
+        cost_mat = country->city_costs_t;
+    }
+
+    printf("\nInserisci la distanza tra le due citta' (in km): ");
+    scanf("%d", &dist);
+    printf("\nInserisci il costo del viaggio tra le due citta': ");
+    scanf("%d", &cost);
+
+    dist_mat[start][end] = dist_mat[end][start] = dist;
+    cost_mat[start][end] = cost_mat[end][start] = cost;
+
+    clear_terminal();
+    printf("+-------------------------------------------+\n");
+    printf("|    Operazione effettuata con successo!    |\n");
+    printf("+-------------------------------------------+\n");
+    csleep(DEFAULT_SLEEP);
+}
+
+void add_manual_link(country_t *country) {
+    int start = 0,
+        end = 0,
+        is_plane = 0;
+
+    clear_terminal();
+    for(int i = 0; i < country->ncities; i++) {
+        printf("\n%d. %s", i, country->cities_names[i]);
+    }
+
+    printf("\nVuoi aggiungere un collegamento con aereo o con treno?");
+    printf("\n0. Treno");
+    printf("\n1. Aereo");
+    scanf("%d", &is_plane);
+
+    printf("\nInserisci i numeri corrispondenti alle due citta' da collegare separati da uno spazio.\n> ");
+    scanf("%d %d", &start, &end);
+
+    add_link(country, start, end, is_plane);
+}
+
 /**
  *  Pannello di controllo admin
  */
 void admin_control_panel(country_t *country) {
     int flag = 0,
-        reports = 0;
+        reports_amount = 0;
     int **reports_matrix = NULL;
-
-    reports = fetch_reports();
 
     do {
         clear_terminal();
 
-        if(reports == -1) {
+        reports_amount = fetch_reports_amount();
+
+        if(reports_amount == -1) {
             printf("+----------------------------------------+\n");
             printf("|    Impossibile recuperare i reports    |\n");
             printf("+----------------------------------------+\n");
-        } else if(reports) {
+        } else if(reports_amount) {
 
-            reports_matrix = create_reports(reports);
+            reports_matrix = fetch_reports(reports_amount);
 
-            if(reports == 1) {
+            if(reports_amount == 1) {
                 printf("+---------------------------+\n");
                 printf("|    Hai 1 nuovo report!    |\n");
                 printf("+---------------------------+\n");
             } else {
                 printf("+----------------------------+\n");
-                printf("|    Hai %-2d nuovi report!    |\n", reports);
+                printf("|    Hai %-2d nuovi report!    |\n", reports_amount);
                 printf("+----------------------------+\n");
             }
         }
@@ -35,6 +87,7 @@ void admin_control_panel(country_t *country) {
         printf("\nCosa si desidera fare?");
         printf("\n1. Aggiungi collegamento");
         printf("\n2. Rimuovi meta");
+        printf("\n3. Controlla reports");
         printf("\n0. Esci");
         printf("\n> ");
         scanf("%d", &flag);
@@ -42,13 +95,18 @@ void admin_control_panel(country_t *country) {
 
         switch(flag) {
             case 1:
-                // Aggiungi arco
+                add_manual_link(country);
+                update_country_db(country);
                 break;
             case 2:
                 clear_terminal();
                 remove_city(country);
-                // Aggiornamento database
+                update_country_db(country);
                 csleep(DEFAULT_SLEEP);
+                break;
+            case 3:
+                check_reports(country, reports_matrix, reports_amount);
+                update_country_db(country);
                 break;
             case 0:
                 break;
@@ -58,30 +116,62 @@ void admin_control_panel(country_t *country) {
         }
     } while(flag);
 
-    for(int i = 0; i < reports; i++) {
+    for(int i = 0; i < reports_amount; i++) {
         free(reports_matrix[i]);
     }
     free(reports_matrix);
 }
 
-int **create_reports(int dim) {
+void check_reports(country_t *country, int **reports, int reports_amount) {
+    char confirm = 0;
+    for(int i = 0; i < reports_amount; i++) {
+        clear_terminal();
+
+        printf("%d -> %d ", reports[i][0], reports[i][1]);
+        if(reports[i][2] == 1) {
+            printf("(Aereo)\n");
+        } else {
+            printf("(Treno)\n");
+        }
+
+        printf("\nAggiungere questo collegamento? (y/n): ");
+        getchar();
+        scanf("%c", &confirm);
+
+        switch(confirm) {
+            case 'y':
+                add_link(country, reports[i][0], reports[i][1], reports[i][2]);
+                break;
+            case 'n':
+                break;
+            default:
+                wrong_selection_message();
+                break;
+        }
+    }
+}
+
+int **fetch_reports(int dim) {
     FILE *reports = fopen(REPORTS_DB, "r");
 
     int **mat = (int **)calloc(dim, sizeof(int *));
     for(int i = 0; i < dim; i++) {
-        mat[i] = (int *)calloc(2, sizeof(int));
+        mat[i] = (int *)calloc(3, sizeof(int));
     }
 
     for(int i = 0; i < dim; i++) {
-        for(int j = 0; j < 2; j++) {
+        for(int j = 0; j < 3; j++) {
             fscanf(reports, "%d", &mat[i][j]);
         }
     }
 
+    // Riapri il database dei report in write mode per cancellarne il contenuto
+    reports = freopen(REPORTS_DB, "w", reports);
+    fclose(reports);
     return mat;
 }
 
-int fetch_reports() {
+int fetch_reports_amount() {
     int reports_amount = 0;
     char buffer;
     FILE *reports = fopen(REPORTS_DB, "r");
@@ -95,6 +185,7 @@ int fetch_reports() {
             }
         }
 
+        fclose(reports);
         return reports_amount;
     }
 }

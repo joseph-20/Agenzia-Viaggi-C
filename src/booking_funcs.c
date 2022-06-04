@@ -211,6 +211,7 @@ float dijkstra_cost(country_t *country, int **cost_matrix, int **distance_matrix
         min = dist;
     }
 
+
     /**
      *  Stampa delle informazioni
      */
@@ -305,6 +306,7 @@ float dijkstra_distance(country_t *country, int **cost_matrix, int **distance_ma
     print_shortest_path(country->cities_names, distance, previous, start, end);
     printf("Costo del viaggio: €%.2f", cost);
     printf("\nDurata del viaggio: ");
+
     if(hr != 0) {
         if(hr > 1) {
             printf("%d ore e ", hr);
@@ -359,7 +361,7 @@ void print_path(char **names, int previous[], int index) {
     }
 }
 
-void report_missing_link(int start, int end) {
+void report_missing_link(int start, int end, int is_plane) {
     FILE *reports = fopen(REPORTS_DB, "a");
     if(!reports) {
         clear_terminal();
@@ -368,7 +370,7 @@ void report_missing_link(int start, int end) {
         printf("+-----------------------------------------------+\n");
         csleep(DEFAULT_SLEEP);
     } else {
-        fprintf(reports, "%d %d\n", start, end);
+        fprintf(reports, "%d %d %d\n", start, end, is_plane);
 
         clear_terminal();
         printf("+---------------------------------------------+\n");
@@ -428,7 +430,7 @@ int travel_by_plane(user_t *user, country_t *country) {
     printf("\n> ");
     scanf("%d", &end);
 
-    if(check_link(country->city_distances_p, country->ncities, end) == 0) {
+    if(check_link(country->city_distances_p, country->ncities, end) == 0 || check_link(country->city_distances_p, country->ncities, start) == 0) {
         clear_terminal();
 
         printf("+------------------------------------------------------------------+\n");
@@ -442,7 +444,7 @@ int travel_by_plane(user_t *user, country_t *country) {
 
         switch(confirm) {
             case 'y':
-                report_missing_link(start, end);
+                report_missing_link(start, end, 1);
                 break;
             case 'n':
                 break;
@@ -457,11 +459,14 @@ int travel_by_plane(user_t *user, country_t *country) {
 
         return -1;
     } else {
-        printf("\nViaggio piu' veloce:");
+        printf("\n");
+        print_divider();
+        printf("Viaggio piu' veloce:");
         cost_fast = dijkstra_distance(country, country->city_costs_p, country->city_distances_p, start, end);
 
         printf("\nViaggio piu' economico:");
         cost_cheap = dijkstra_cost(country, country->city_costs_p, country->city_distances_p, start, end);
+        print_divider();
 
         do {
             printf("\nQuale viaggio desideri prenotare?");
@@ -537,6 +542,7 @@ int travel_by_plane(user_t *user, country_t *country) {
                     }
                     break;
                 case 0:
+                    return -1;
                     break;
                 default:
                     clear_terminal();
@@ -575,7 +581,7 @@ int travel_by_train(user_t *user, country_t *country) {
     printf("\n> ");
     scanf("%d", &end);
 
-    if(!check_link(country->city_distances_t, country->ncities, end)) {
+    if(check_link(country->city_distances_t, country->ncities, end) == 0 || check_link(country->city_distances_t, country->ncities, start) == 0) {
         clear_terminal();
 
         printf("+------------------------------------------------------------------+\n");
@@ -589,7 +595,7 @@ int travel_by_train(user_t *user, country_t *country) {
 
         switch(confirm) {
             case 'y':
-                report_missing_link(start, end);
+                report_missing_link(start, end, 0);
                 break;
             case 'n':
                 break;
@@ -605,11 +611,14 @@ int travel_by_train(user_t *user, country_t *country) {
 
         return -1;
     } else {
-        printf("\nViaggio piu' veloce:");
+        printf("\n");
+        print_divider();
+        printf("Viaggio piu' veloce:");
         cost_fast = dijkstra_distance(country, country->city_costs_t, country->city_distances_t, start, end);
 
         printf("\nViaggio piu' economico:");
         cost_cheap = dijkstra_cost(country, country->city_costs_t, country->city_distances_t, start, end);
+        print_divider();
 
         do {
             printf("\nQuale viaggio desideri prenotare?");
@@ -685,6 +694,7 @@ int travel_by_train(user_t *user, country_t *country) {
                     }
                     break;
                 case 0:
+                    return -1;
                     break;
                 default:
                     clear_terminal();

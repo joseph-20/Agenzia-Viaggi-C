@@ -39,6 +39,14 @@ int main_menu() {
     return flag;
 }
 
+void print_divider() {
+    printf("+");
+    for(int i = 0; i < MAX_LONG; i++) {
+        printf("-");
+    }
+    printf("+\n");
+}
+
 void print_logo() {
     printf(" _______ _      _        _   ______        _   \n");
     printf("|__   __(_)    | |      | | |  ____|      | |  \n");

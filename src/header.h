@@ -19,7 +19,6 @@
 #define ADMIN_PIN 1234
 #define DEFAULT_SLEEP 2
 #define LINE_MAX 150
-#define LOGO_HEIGHT 6
 #define MAX 20
 #define MAX_LONG 50
 
@@ -58,9 +57,12 @@ typedef struct user {
 //      Funzioni Amministratore      //
 ///////////////////////////////////////
 
+void add_link(country_t *country, int start, int end, int is_plane);
+void add_manual_link(country_t *country);
 void admin_control_panel(country_t *country);
-int **create_reports(int dim);
-int fetch_reports();
+void check_reports(country_t *country, int **reports, int reports_amount);
+int **fetch_reports(int dim);
+int fetch_reports_amount();
 int login_admin();
 void remove_city(country_t *country);
 
@@ -103,7 +105,7 @@ float dijkstra_distance(country_t *country, int **cost_matrix, int **distance_ma
 int get_minimum_distance(int dim, int distance[], bool done[]);
 void print_shortest_path(char **names, int distance[], int previous[], int start, int end);
 void print_path(char **names, int previous[], int index);
-void report_missing_link(int start, int end);
+void report_missing_link(int start, int end, int is_plane);
 int transport_choice();
 int travel_by_plane(user_t *user, country_t *country);
 int travel_by_train(user_t *user, country_t *country);
@@ -115,6 +117,7 @@ int travel_by_train(user_t *user, country_t *country);
 void clear_terminal();
 void csleep(int seconds);
 int main_menu();
+void print_divider();
 void print_logo();
 void wrong_selection_message();
 
