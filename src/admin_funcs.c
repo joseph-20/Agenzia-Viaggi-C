@@ -45,7 +45,7 @@ void add_manual_link(country_t *country) {
 
     clear_terminal();
     for(int i = 0; i < country->ncities; i++) {
-        printf("\n%d. %s", i, country->cities_names[i]);
+        printf("%d. %s\n", i, country->cities_names[i]);
     }
 
     printf("\nInserisci i numeri corrispondenti alle due citta' da collegare separati da uno spazio.\n> ");
