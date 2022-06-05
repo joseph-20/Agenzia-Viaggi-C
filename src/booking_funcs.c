@@ -130,7 +130,7 @@ void dijkstra_city(city_t *city, int start, int end) {
 
     if(dist > 60) {
         hr = dist / 60;
-        min = dist / 60;
+        min = (int)dist % 60;
     } else {
         min = dist;
     }
@@ -218,7 +218,7 @@ float dijkstra_cost(country_t *country, int **cost_matrix, int **distance_matrix
     // Quantificazione del tempo di viaggio in ore e minuti
     if(dist > 60) {
         hr = dist / 60;
-        min = dist / 60;
+        min = (int)dist % 60;
     } else {
         min = dist;
     }
@@ -310,7 +310,7 @@ float dijkstra_distance(country_t *country, int **cost_matrix, int **distance_ma
 
     if(dist > 60) {
         hr = dist / 60;
-        min = dist / 60;
+        min = (int)dist % 60;
     } else {
         min = dist;
     }
