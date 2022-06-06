@@ -445,10 +445,10 @@ int travel_by_plane(user_t *user, country_t *country) {
     if(check_link(country->city_distances_p, country->ncities, end) == 0 || check_link(country->city_distances_p, country->ncities, start) == 0) {
         clear_terminal();
 
-        printf("+------------------------------------------------------------------+\n");
-        printf("|    La citta' di destinazione selezionata non è raggiungibile.    |\n");
-        printf("|       Vorreste segnalare il problema agli amministratori?        |\n");
-        printf("+------------------------------------------------------------------+\n");
+        printf("+-------------------------------------------------------------------+\n");
+        printf("|    La citta' di destinazione selezionata non e' raggiungibile.    |\n");
+        printf("|        Vorreste segnalare il problema agli amministratori?        |\n");
+        printf("+-------------------------------------------------------------------+\n");
 
         printf("\n(y/n)> ");
         getchar();
@@ -598,10 +598,10 @@ int travel_by_train(user_t *user, country_t *country) {
     if(check_link(country->city_distances_t, country->ncities, end) == 0 || check_link(country->city_distances_t, country->ncities, start) == 0) {
         clear_terminal();
 
-        printf("+------------------------------------------------------------------+\n");
-        printf("|    La citta' di destinazione selezionata non è raggiungibile.    |\n");
-        printf("|       Vorreste segnalare il problema agli amministratori?        |\n");
-        printf("+------------------------------------------------------------------+\n");
+        printf("+-------------------------------------------------------------------+\n");
+        printf("|    La citta' di destinazione selezionata non e' raggiungibile.    |\n");
+        printf("|        Vorreste segnalare il problema agli amministratori?        |\n");
+        printf("+-------------------------------------------------------------------+\n");
 
         printf("\n(y/n)> ");
         getchar();

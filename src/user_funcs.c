@@ -208,9 +208,9 @@ user_t *sign_in(user_t *user_list) {
         }
     } else {
         clear_terminal();
-        printf("+-----------------------------------------+\n");
-        printf("|    La email inserita non è corretta.    |\n");
-        printf("+-----------------------------------------+\n");
+        printf("+------------------------------------------+\n");
+        printf("|    La email inserita non e' corretta.    |\n");
+        printf("+------------------------------------------+\n");
         csleep(3);
     }
 
@@ -256,6 +256,11 @@ user_t *sign_up(user_t *user_list) {
     user_list = add_user_to_list(user_list, new);
 
     update_user_list(user_list);
+
+    clear_terminal();
+    printf("+--------------------------------------------+\n");
+    printf("|    Registrazione avvenuta con successo!    |\n");
+    printf("+--------------------------------------------+\n");
 
     return user_list;
 }
