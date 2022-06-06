@@ -70,7 +70,7 @@ void admin_control_panel(country_t *country) {
         if(reports_amount == -1) {
             printf("+----------------------------------------+\n");
             printf("|    Impossibile recuperare i reports    |\n");
-            printf("+----------------------------------------+\n");
+            printf("+----------------------------------------+\n\n");
         } else if(reports_amount) {
 
             reports_matrix = fetch_reports(reports_amount);
@@ -78,7 +78,7 @@ void admin_control_panel(country_t *country) {
             if(reports_amount == 1) {
                 printf("+---------------------------+\n");
                 printf("|    Hai 1 nuovo report!    |\n");
-                printf("+---------------------------+\n");
+                printf("+---------------------------+\n\n");
             } else {
                 printf("+----------------------------+\n");
                 printf("|    Hai %-2d nuovi report!    |\n", reports_amount);
