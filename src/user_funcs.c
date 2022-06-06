@@ -226,6 +226,8 @@ user_t *sign_up(user_t *user_list) {
     user_t *new = NULL;
     int flag = 0;
 
+    clear_terminal();
+
     printf("Inserisci nome: ");
     fgets(first_name, MAX_LONG, stdin);
     first_name[strcspn(first_name, "\n")] = 0;
@@ -261,6 +263,7 @@ user_t *sign_up(user_t *user_list) {
     printf("+--------------------------------------------+\n");
     printf("|    Registrazione avvenuta con successo!    |\n");
     printf("+--------------------------------------------+\n");
+    csleep(DEFAULT_SLEEP);
 
     return user_list;
 }
